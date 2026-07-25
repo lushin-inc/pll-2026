@@ -250,6 +250,54 @@
   .gl-sum{display:flex;gap:20px;flex-wrap:wrap;padding:12px 2px 2px;font-size:12px;color:var(--ink-faint)}
   .gl-sum b{font-family:'Barlow Condensed',sans-serif;font-size:16px;color:var(--ink);font-weight:700}
 
+  /* ---- Head to head ---- */
+  .h2h-lab{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px}
+  .h2h-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+  .h2h-btn{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:6px;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s}
+  .h2h-btn:hover:not(:disabled){background:var(--panel-2)}
+  .h2h-btn.on{border-color:var(--accent-line);background:var(--accent-soft)}
+  .h2h-btn:disabled{opacity:.25;cursor:not-allowed}
+  .h2h-btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  .h2h-btn .lg{width:32px;height:32px}
+
+  .h2h-head{background:var(--panel);border:1px solid var(--accent-line);border-radius:18px;padding:24px 20px;
+    display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;box-shadow:var(--row-shadow)}
+  .h2h-side{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;min-width:0}
+  .h2h-side .lg{width:62px;height:62px}
+  .h2h-nm{font-weight:600;font-size:14.5px;line-height:1.3}
+  .h2h-mid{text-align:center}
+  .h2h-rec{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:50px;line-height:.9;
+    font-variant-numeric:tabular-nums;color:var(--accent-ink);white-space:nowrap}
+  .h2h-verd{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint);margin-top:8px}
+  .h2h-agg{display:flex;justify-content:center;gap:26px;flex-wrap:wrap;
+    margin-top:18px;padding-top:16px;border-top:1px solid var(--line);text-align:center}
+  .h2h-none{padding:26px 20px;text-align:center;color:var(--ink-soft);font-size:14px;line-height:1.6}
+
+  .h2h-g{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;
+    display:grid;grid-template-columns:62px 1fr auto;gap:12px;align-items:center;box-shadow:var(--row-shadow)}
+  .h2h-g.next{border-color:var(--accent-line);background:var(--accent-soft)}
+  .h2h-sc{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:600;min-width:0;flex-wrap:wrap}
+  .h2h-num{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:23px;font-variant-numeric:tabular-nums}
+  .h2h-dim{color:var(--ink-faint);font-weight:500}
+  .h2h-meta{font-size:11.5px;color:var(--ink-faint);text-align:right;white-space:nowrap}
+
+  /* ---- Series matrix ---- */
+  .mx-wrap{overflow-x:auto;padding:2px;margin:0 -2px}
+  .mx{display:grid;grid-template-columns:38px repeat(8,minmax(46px,1fr));gap:5px;align-items:center;min-width:430px}
+  .mx-hd{display:flex;align-items:center;justify-content:center;padding-bottom:2px}
+  .mx-hd .lg{width:26px;height:26px}
+  .mx-rh{display:flex;align-items:center;justify-content:center}
+  .mx-rh .lg{width:26px;height:26px}
+  .mx-c{height:40px;border-radius:9px;background:var(--panel);border:1px solid var(--line);cursor:pointer;
+    font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--ink-soft);
+    display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums;padding:0}
+  .mx-c:hover{background:var(--panel-2);color:var(--ink)}
+  .mx-c:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+  .mx-c.on{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent-ink)}
+  .mx-c.self{background:transparent;border-color:transparent;cursor:default;color:var(--ink-faint);font-size:13px}
+  .mx-c.none{color:var(--ink-faint);font-size:13px}
+
   /* ---- Record watch ---- */
   .kw-card{background:var(--panel);border:1px solid var(--accent-line);border-radius:18px;padding:24px;box-shadow:var(--row-shadow)}
   .kw-count{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
@@ -305,6 +353,11 @@
     .tile{min-height:170px}.tile-name{font-size:36px}
     .st-cell{min-width:38px}.st-rec{font-size:23px}
     .st-stats{gap:12px}
+    .h2h-head{padding:20px 14px;gap:8px}
+    .h2h-side .lg{width:48px;height:48px}
+    .h2h-rec{font-size:38px}
+    .h2h-g{grid-template-columns:56px 1fr;gap:9px}
+    .h2h-meta{grid-column:1/-1;text-align:left}
     .st-main{grid-template-columns:22px 38px 1fr auto;gap:9px}
     .row-main{grid-template-columns:28px 30px 1fr auto;gap:10px}
     .lg{width:30px;height:30px}.lg-lg{width:38px;height:38px}
@@ -391,6 +444,14 @@ const CHASE = [                    // best single-season goal totals in PLL hist
 // Every result of the season so far, through Fri, Jul 24.
 const GAMES = [{"d":"2026-05-08","w":"Redwoods","ws":9,"l":"Archers","ls":5},{"d":"2026-05-08","w":"Atlas","ws":16,"l":"Chaos","ls":12},{"d":"2026-05-09","w":"Waterdogs","ws":16,"l":"Whipsnakes","ls":14},{"d":"2026-05-09","w":"Archers","ws":10,"l":"Outlaws","ls":7},{"d":"2026-05-15","w":"Chaos","ws":14,"l":"Cannons","ls":10},{"d":"2026-05-15","w":"Whipsnakes","ws":12,"l":"Atlas","ls":6},{"d":"2026-05-16","w":"Outlaws","ws":10,"l":"Redwoods","ls":9},{"d":"2026-05-16","w":"Cannons","ws":19,"l":"Waterdogs","ls":5},{"d":"2026-05-29","w":"Whipsnakes","ws":17,"l":"Cannons","ls":10},{"d":"2026-05-30","w":"Outlaws","ws":16,"l":"Atlas","ls":9},{"d":"2026-05-30","w":"Whipsnakes","ws":8,"l":"Archers","ls":5},{"d":"2026-05-30","w":"Chaos","ws":10,"l":"Waterdogs","ls":8},{"d":"2026-06-05","w":"Archers","ws":15,"l":"Chaos","ls":7},{"d":"2026-06-05","w":"Redwoods","ws":12,"l":"Atlas","ls":11},{"d":"2026-06-06","w":"Chaos","ws":12,"l":"Outlaws","ls":11},{"d":"2026-06-06","w":"Waterdogs","ws":17,"l":"Cannons","ls":10},{"d":"2026-06-19","w":"Atlas","ws":12,"l":"Cannons","ls":11},{"d":"2026-06-19","w":"Redwoods","ws":16,"l":"Archers","ls":14},{"d":"2026-06-20","w":"Atlas","ws":16,"l":"Whipsnakes","ls":14},{"d":"2026-06-27","w":"Outlaws","ws":13,"l":"Whipsnakes","ls":7},{"d":"2026-06-27","w":"Cannons","ws":15,"l":"Redwoods","ls":12},{"d":"2026-06-28","w":"Waterdogs","ws":11,"l":"Archers","ls":10},{"d":"2026-06-28","w":"Redwoods","ws":14,"l":"Chaos","ls":13,"ot":1},{"d":"2026-07-10","w":"Waterdogs","ws":15,"l":"Redwoods","ls":13},{"d":"2026-07-10","w":"Archers","ws":16,"l":"Atlas","ls":5},{"d":"2026-07-11","w":"Cannons","ws":15,"l":"Outlaws","ls":13},{"d":"2026-07-11","w":"Whipsnakes","ws":17,"l":"Chaos","ls":10},{"d":"2026-07-17","w":"Whipsnakes","ws":20,"l":"Redwoods","ls":7},{"d":"2026-07-18","w":"Outlaws","ws":10,"l":"Chaos","ls":8},{"d":"2026-07-18","w":"Archers","ws":18,"l":"Waterdogs","ls":8},{"d":"2026-07-19","w":"Cannons","ws":15,"l":"Atlas","ls":13},{"d":"2026-07-24","w":"Archers","ws":16,"l":"Outlaws","ls":11},{"d":"2026-07-24","w":"Waterdogs","ws":11,"l":"Atlas","ls":10}];
 
+const LATE = [
+  {d:"2026-07-25", w:"Chaos", ws:13, l:"Cannons", ls:12}
+];
+
+// Remaining fixtures. The Jul 25 Cannons–Chaos result is final and shown on the Teams page,
+// so it is not repeated here.
+const UPCOMING = [{"d":"2026-07-25","a":"Whipsnakes","b":"Archers","t":"6:30 PM ET","tv":"ESPN+","loc":"Denver, CO"},{"d":"2026-07-25","a":"Waterdogs","b":"Outlaws","t":"9:00 PM ET","tv":"ESPN2","loc":"Denver, CO"},{"d":"2026-07-31","a":"Redwoods","b":"Chaos","t":"6:00 PM ET","tv":"ESPN+","loc":"Columbus, OH"},{"d":"2026-07-31","a":"Cannons","b":"Archers","t":"8:30 PM ET","tv":"ESPN+","loc":"Columbus, OH"},{"d":"2026-08-01","a":"Outlaws","b":"Whipsnakes","t":"12:30 PM ET","tv":"ABC","loc":"Columbus, OH"},{"d":"2026-08-01","a":"Chaos","b":"Waterdogs","t":"3:00 PM ET","tv":"ESPN+","loc":"Columbus, OH"},{"d":"2026-08-02","a":"Atlas","b":"Redwoods","t":"3:00 PM ET","tv":"ABC","loc":"Columbus, OH"},{"d":"2026-08-07","a":"Whipsnakes","b":"Cannons","t":"6:00 PM ET","tv":"ESPN+","loc":"Boston, MA"},{"d":"2026-08-07","a":"Chaos","b":"Archers","t":"8:30 PM ET","tv":"ESPN+","loc":"Boston, MA"},{"d":"2026-08-08","a":"Outlaws","b":"Atlas","t":"1:00 PM ET","tv":"ABC","loc":"Boston, MA"},{"d":"2026-08-08","a":"Redwoods","b":"Cannons","t":"8:00 PM ET","tv":"ESPN+","loc":"Boston, MA"},{"d":"2026-08-15","a":"Whipsnakes","b":"Waterdogs","t":"2:00 PM ET","tv":"ESPN","loc":"Philadelphia, PA"},{"d":"2026-08-16","a":"Atlas","b":"Waterdogs","t":"1:00 PM ET","tv":"ABC","loc":"Philadelphia, PA"},{"d":"2026-08-16","a":"Outlaws","b":"Redwoods","t":"3:30 PM ET","tv":"ESPN+","loc":"Philadelphia, PA"}];
+
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const shortDate = iso => { const [y,m,d] = iso.split("-").map(Number); return MONTHS[m-1]+" "+d; };
 
@@ -400,6 +461,19 @@ function teamGames(team){
     const won = g.w===team;
     return {d:g.d, won, opp:won?g.l:g.w, gf:won?g.ws:g.ls, ga:won?g.ls:g.ws, ot:!!g.ot};
   });
+}
+
+// Every meeting between two teams, played and scheduled.
+function series(a, b){
+  const played = GAMES.concat(LATE.map(g=>({...g, late:1})))
+    .filter(g=>(g.w===a&&g.l===b)||(g.w===b&&g.l===a))
+    .map(g=>({d:g.d, winner:g.w, ot:!!g.ot, late:!!g.late,
+              af:g.w===a?g.ws:g.ls, bf:g.w===b?g.ws:g.ls}))
+    .sort((x,y)=> x.d<y.d ? -1 : 1);
+  const next = UPCOMING.filter(u=>(u.a===a&&u.b===b)||(u.a===b&&u.b===a));
+  const aw = played.filter(g=>g.winner===a).length;
+  return {played, next, aw, bw:played.length-aw,
+          af:played.reduce((n,g)=>n+g.af,0), bf:played.reduce((n,g)=>n+g.bf,0)};
 }
 
 const logo = (t, cls) => `<img class="lg ${cls||''}" src="${LOGOS[t]}" alt="${t} logo" loading="lazy">`;
@@ -435,6 +509,7 @@ const ICONS = {
   faceoff:'<svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/><circle cx="12" cy="12" r="2.4"/></svg>',
   defense:'<svg viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.4 8.8-8 11-4.6-2.2-8-6-8-11V5l8-3z"/></svg>',
   goalies:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 10h18M8 5v14M16 5v14"/></svg>',
+  h2h:'<svg viewBox="0 0 24 24"><path d="M3 8h12l-3.5-3.5"/><path d="M21 16H9l3.5 3.5"/></svg>',
   kirst:'<svg viewBox="0 0 24 24"><path d="M8 3h8v5a4 4 0 0 1-8 0V3z"/><path d="M8 5H5.5a2.5 2.5 0 0 0 2.5 4.5"/><path d="M16 5h2.5a2.5 2.5 0 0 1-2.5 4.5"/><path d="M10.5 12.5L9.5 21h5l-1-8.5"/><path d="M8 21h8"/></svg>',
   sun:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>',
   moon:'<svg viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>'
@@ -449,6 +524,13 @@ const SECTIONS = {
     accentSoft:"rgba(59,74,92,.12)", accentLine:"rgba(120,140,160,.45)",
     activeInk:"#fff",
     pools:[{key:"conf",label:"By conference"},{key:"league",label:"League table"}]
+  },
+  h2h:{
+    name:"Head to Head", eyebrow:"PLL 2026 · Every meeting", h2h:true, ico:"h2h",
+    grad:"linear-gradient(135deg,#0f8a7a,#17212b)", glow:"rgba(15,138,122,.28)",
+    accent:"#0d7a6c", accentDark:"#3cc2ae",
+    accentSoft:"rgba(15,138,122,.12)", accentLine:"rgba(15,138,122,.5)",
+    activeInk:"#fff"
   },
   kirst:{
     name:"Kirst Watch", eyebrow:"PLL 2026 · Single-season goals record", record:true, ico:"kirst",
@@ -548,13 +630,15 @@ const SECTIONS = {
   }
 };
 
-const ORDER = ["teams","kirst","attack","midfield","faceoff","defense","goalies"];
+const ORDER = ["teams","h2h","kirst","attack","midfield","faceoff","defense","goalies"];
 
 const state = {};
 ORDER.forEach(k=>{
   const s = SECTIONS[k];
   state[k] = { sort:s.sorts?s.sorts[0].key:null, pool:s.pools?s.pools[0].key:null, team:"all", open:null };
 });
+state.h2h.a = "Whipsnakes";
+state.h2h.b = "Waterdogs";
 
 // ---- Preferences (theme + nav), guarded so they degrade gracefully ----
 function loadPref(key, fallback){
@@ -610,10 +694,12 @@ function renderHome(){
       ${ORDER.map(k=>{
         const s = SECTIONS[k];
         const count = s.standings ? "8 teams"
+          : s.h2h ? "28 matchups"
           : s.tileNote ? s.tileNote
           : PLAYERS.filter(s.filter).length + " players";
         return `<a class="tile" href="#${k}" style="background:${s.grad};box-shadow:0 8px 30px ${s.glow}">
           ${k==="teams" ? `<div class="tile-logos">${TEAMS.map(t=>logo(t)).join("")}</div>`
+            : k==="h2h" ? `<div class="tile-logos">${logo(state.h2h.a)}${logo(state.h2h.b)}</div>`
             : k==="kirst" ? `<div class="tile-logos">${logo("Waterdogs")}</div>` : ''}
           <div class="tile-eyebrow">${count}</div>
           <div class="tile-name">${s.name}</div>
@@ -716,6 +802,106 @@ function renderTeams(){
     </div>
     ${body}
     <div class="note">Tap any team for its full game log. The strip under each name is the season so far, oldest result on the left. Standings and game logs run through Friday, Jul 24 \u2014 Saturday's results are in the scoreboard above. The bar under each row is win percentage; score differential is the first tiebreaker.</div>
+  </div>`;
+}
+
+function renderH2H(){
+  const s = SECTIONS.h2h;
+  const st = state.h2h;
+  const a = st.a, b = st.b;
+  const S = series(a,b);
+  const lead = S.aw>S.bw ? a : (S.bw>S.aw ? b : null);
+  const verdict = !S.played.length ? "Haven't met yet"
+    : lead ? `${lead} lead the season series` : "Season series level";
+
+  const picker = (side, chosen, other) => `
+    <div class="h2h-lab">${side==='a'?'Team':'Opponent'}</div>
+    <div class="h2h-row">
+      ${TEAMS.map(t=>`<button class="h2h-btn ${t===chosen?'on':''}" data-h${side}="${t}"
+        ${t===other?'disabled':''} title="${t}" aria-label="${t}" aria-pressed="${t===chosen}">
+        ${logo(t)}</button>`).join("")}
+    </div>`;
+
+  // Matrix cell = the row team's record against the column team.
+  const matrix = `
+  <div class="mx-wrap"><div class="mx">
+    <div></div>
+    ${TEAMS.map(t=>`<div class="mx-hd">${logo(t)}</div>`).join("")}
+    ${TEAMS.map(r=>`
+      <div class="mx-rh">${logo(r)}</div>
+      ${TEAMS.map(c=>{
+        if (r===c) return `<div class="mx-c self">—</div>`;
+        const x = series(r,c);
+        const on = (r===a&&c===b)||(r===b&&c===a);
+        const txt = x.played.length ? `${x.aw}–${x.bw}` : "·";
+        return `<button class="mx-c ${on?'on':''} ${x.played.length?'':'none'}"
+          data-hcell="${r}|${c}" title="${r} vs ${c}: ${x.played.length?`${x.aw}–${x.bw}`:'not yet played'}">${txt}</button>`;
+      }).join("")}`).join("")}
+  </div></div>`;
+
+  view.innerHTML = `
+  <div style="${sectionVars(s)}">
+    <div class="sec-head" style="background:${s.grad}">
+      <div class="sec-eyebrow">${s.eyebrow}</div>
+      <div class="sec-name">Head to Head</div>
+    </div>
+
+    ${picker('a', a, b)}
+    ${picker('b', b, a)}
+
+    <div class="h2h-head">
+      <div class="h2h-side">${logo(a)}<div class="h2h-nm">${a}</div></div>
+      <div class="h2h-mid">
+        <div class="h2h-rec">${S.aw}–${S.bw}</div>
+        <div class="h2h-verd">${verdict}</div>
+      </div>
+      <div class="h2h-side">${logo(b)}<div class="h2h-nm">${b}</div></div>
+      ${S.played.length ? `
+        <div class="h2h-agg" style="grid-column:1/-1">
+          <div><div class="d-val">${S.af}</div><div class="d-label">${a} goals</div></div>
+          <div><div class="d-val">${(S.af/S.played.length).toFixed(1)}–${(S.bf/S.played.length).toFixed(1)}</div><div class="d-label">Avg score</div></div>
+          <div><div class="d-val">${S.bf}</div><div class="d-label">${b} goals</div></div>
+        </div>` : ''}
+    </div>
+
+    ${S.played.length ? `
+      <div class="kw-sub">${S.played.length===1?'The meeting':`All ${S.played.length} meetings`}</div>
+      <div class="board">
+        ${S.played.map(g=>{
+          const aWon = g.winner===a;
+          return `<div class="h2h-g">
+            <div class="h2h-meta" style="text-align:left">${shortDate(g.d)}</div>
+            <div class="h2h-sc">
+              ${logo(a,'lg-sm')}<span class="h2h-num ${aWon?'':'h2h-dim'}">${g.af}</span>
+              <span class="h2h-dim">–</span>
+              <span class="h2h-num ${aWon?'h2h-dim':''}">${g.bf}</span>${logo(b,'lg-sm')}
+            </div>
+            <div class="h2h-meta">${g.winner} won${g.ot?' · OT':''}${g.late?'<br><span style="color:var(--accent-ink)">not yet in standings</span>':''}</div>
+          </div>`;
+        }).join("")}
+      </div>` : `
+      <div class="h2h-none">These two haven't played yet this season.</div>`}
+
+    ${S.next.length ? `
+      <div class="kw-sub">Still to come</div>
+      <div class="board">
+        ${S.next.map(u=>`
+          <div class="h2h-g next">
+            <div class="h2h-meta" style="text-align:left">${shortDate(u.d)}</div>
+            <div class="h2h-sc">${logo(u.a,'lg-sm')}<span>${u.a}</span>
+              <span class="h2h-dim">vs</span>${logo(u.b,'lg-sm')}<span>${u.b}</span></div>
+            <div class="h2h-meta">${u.t} · ${u.tv}<br>${u.loc}</div>
+          </div>`).join("")}
+      </div>` : `
+      <div class="note">No further meetings on the regular-season schedule.</div>`}
+
+    <div class="kw-sub">Every series</div>
+    ${matrix}
+    <div class="note">
+      Each cell is the row team's record against the column team — tap one to load that matchup.
+      A dot means they haven't met yet. Head-to-head includes Saturday's Chaos–Cannons result, which
+      lands after the stats and standings cutoff and is flagged where it appears.
+    </div>
   </div>`;
 }
 
@@ -851,6 +1037,7 @@ function renderKirst(){
 function renderSection(key){
   if (SECTIONS[key].standings){ renderTeams(); return; }
   if (SECTIONS[key].record){ renderKirst(); return; }
+  if (SECTIONS[key].h2h){ renderH2H(); return; }
   const s = SECTIONS[key];
   const st = state[key];
   const sort = s.sorts.find(x=>x.key===st.sort) || s.sorts[0];
@@ -947,6 +1134,17 @@ document.addEventListener("click", e=>{
   const route = currentRoute();
   if (route==="home") return;
   const st = state[route];
+  const ha = e.target.closest("[data-ha]");
+  if (ha){ if (ha.dataset.ha!==st.b) st.a = ha.dataset.ha; renderSection(route); return; }
+  const hb = e.target.closest("[data-hb]");
+  if (hb){ if (hb.dataset.hb!==st.a) st.b = hb.dataset.hb; renderSection(route); return; }
+  const hc = e.target.closest("[data-hcell]");
+  if (hc){
+    const [r,c] = hc.dataset.hcell.split("|");
+    st.a = r; st.b = c; renderSection(route);
+    window.scrollTo({top:0, behavior:"smooth"});
+    return;
+  }
   const tl = e.target.closest("[data-tlog]");
   if (tl){ st.open = st.open===tl.dataset.tlog ? null : tl.dataset.tlog; renderSection(route); return; }
   const sb = e.target.closest("[data-sort]");
