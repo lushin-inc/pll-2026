@@ -232,8 +232,7 @@
   .pip-l{background:var(--sd-neg,#c22e2e)}
   .st-row{cursor:pointer}
   .st-row:hover{background:var(--panel-2)}
-  .gl{display:none;margin-top:15px;padding-top:6px;border-top:1px solid var(--line);flex-direction:column}
-  .row.open .gl{display:flex}
+  .gl{display:flex;flex-direction:column}
   .gl-g{display:grid;grid-template-columns:60px 24px 1fr auto;gap:11px;align-items:center;
     padding:10px 2px;border-bottom:1px solid var(--line)}
   .gl-g:last-of-type{border-bottom:none}
@@ -249,6 +248,33 @@
   .gl-ot{font-size:9.5px;letter-spacing:.07em;color:var(--ink-faint);margin-left:5px}
   .gl-sum{display:flex;gap:20px;flex-wrap:wrap;padding:12px 2px 2px;font-size:12px;color:var(--ink-faint)}
   .gl-sum b{font-family:'Barlow Condensed',sans-serif;font-size:16px;color:var(--ink);font-weight:700}
+
+  /* ---- Team page ---- */
+  .tm-pick{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px;align-items:center}
+  .tm-all{font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;padding:0 14px;height:46px;
+    border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);cursor:pointer}
+  .tm-all:hover{background:var(--panel-2);color:var(--ink)}
+  .tm-all.on{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent-ink)}
+  .tm-all:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  .tm-btn{width:46px;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--panel);
+    cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:background .15s,border-color .15s}
+  .tm-btn:hover{background:var(--panel-2)}
+  .tm-btn.on{border-color:var(--accent-line);background:var(--accent-soft)}
+  .tm-btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  .tm-btn .lg{width:32px;height:32px}
+
+  .tm-card{background:var(--panel);border:1px solid var(--accent-line);border-radius:18px;
+    padding:20px 22px;box-shadow:var(--row-shadow)}
+  .tm-nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:14px}
+  .tm-nums .d-val{font-size:27px}
+  .tm-lead{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;
+    margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+  .tm-lead-v{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:19px;line-height:1.15}
+  .tm-lead-v b{color:var(--accent-ink);font-weight:700}
+  .tm-grp{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.07em;
+    text-transform:uppercase;color:var(--ink-faint);margin:22px 0 9px}
+  .tm-row .row-main{grid-template-columns:1fr auto}
+  .tm-late{color:var(--accent-ink)}
 
   /* ---- Head to head ---- */
   .h2h-lab{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px}
@@ -353,6 +379,7 @@
     .tile{min-height:170px}.tile-name{font-size:36px}
     .st-cell{min-width:38px}.st-rec{font-size:23px}
     .st-stats{gap:12px}
+    .tm-card{padding:16px 14px}
     .h2h-head{padding:20px 14px;gap:8px}
     .h2h-side .lg{width:48px;height:48px}
     .h2h-rec{font-size:38px}
@@ -463,6 +490,24 @@ function teamGames(team){
   });
 }
 
+// Standings line + conference placing for one team.
+function teamInfo(team){
+  for (const key of ["eastern","western"]){
+    const i = STANDINGS[key].findIndex(r=>r.team===team);
+    if (i>=0) return {...STANDINGS[key][i], conf: key==="eastern"?"Eastern":"Western", rank:i+1};
+  }
+  return null;
+}
+
+// Results including anything that landed after the standings cutoff (flagged).
+function teamGamesAll(team){
+  return GAMES.concat(LATE.map(g=>({...g, late:1})))
+    .filter(g=>g.w===team||g.l===team)
+    .map(g=>{ const won=g.w===team;
+      return {d:g.d, won, opp:won?g.l:g.w, gf:won?g.ws:g.ls, ga:won?g.ls:g.ws, ot:!!g.ot, late:!!g.late}; })
+    .sort((x,y)=> x.d<y.d ? -1 : 1);
+}
+
 // Every meeting between two teams, played and scheduled.
 function series(a, b){
   const played = GAMES.concat(LATE.map(g=>({...g, late:1})))
@@ -498,6 +543,16 @@ const DEF_DETAIL = p => [
 const G_DETAIL = p => [
   [fmtPct(p.svp),"Save %"],[fmt2(p.saa),"Goals Against Avg"],[p.sv,"Saves"],
   [p.sa,"Goals Against"],[fmtPct(p.clp),"Clean Save %"],[p.ct,"Caused TOs"],[p.gb,"Groundballs"]
+];
+
+// Position groups for a team roster, each with the stat that matters most.
+const TEAM_GROUPS = [
+  {label:"Attack",   f:p=>p.p==="A",  key:"pts", fmt:fmtNum, unit:"Points",    detail:FIELD_DETAIL},
+  {label:"Midfield", f:p=>p.p==="M",  key:"pts", fmt:fmtNum, unit:"Points",    detail:FIELD_DETAIL},
+  {label:"Faceoff",  f:p=>p.p==="FO", key:"fop", fmt:fmtPct, unit:"Faceoff %", detail:FO_DETAIL},
+  {label:"Defense",  f:p=>["D","LSM","SSDM"].includes(p.p), key:"ct", fmt:fmtNum,
+   unit:"Caused TOs", detail:DEF_DETAIL, showPos:true},
+  {label:"Goalies",  f:p=>p.p==="G",  key:"svp", fmt:fmtPct, unit:"Save %",    detail:G_DETAIL},
 ];
 
 // Icons: simple stroke SVGs for the side nav
@@ -637,6 +692,7 @@ ORDER.forEach(k=>{
   const s = SECTIONS[k];
   state[k] = { sort:s.sorts?s.sorts[0].key:null, pool:s.pools?s.pools[0].key:null, team:"all", open:null };
 });
+state.teams.sel = null;
 state.h2h.a = "Whipsnakes";
 state.h2h.b = "Waterdogs";
 
@@ -709,7 +765,7 @@ function renderHome(){
 }
 
 function gameLog(team){
-  const gs = teamGames(team);
+  const gs = teamGamesAll(team);
   const gf = gs.reduce((n,g)=>n+g.gf,0), ga = gs.reduce((n,g)=>n+g.ga,0);
   return `<div class="gl">
     ${gs.map(g=>`
@@ -717,7 +773,7 @@ function gameLog(team){
         <div class="gl-d">${shortDate(g.d)}</div>
         <div class="gl-r ${g.won?'gl-w':'gl-l'}">${g.won?'W':'L'}</div>
         <div class="gl-o">${logo(g.opp,'lg-sm')}<span>${g.opp}</span></div>
-        <div class="gl-s">${g.gf}\u2013${g.ga}${g.ot?'<span class="gl-ot">OT</span>':''}</div>
+        <div class="gl-s">${g.gf}\u2013${g.ga}${g.ot?'<span class="gl-ot">OT</span>':''}${g.late?'<span class="gl-ot tm-late">NEW</span>':''}</div>
       </div>`).join("")}
     <div class="gl-sum">
       <div><b>${gs.length}</b> played</div>
@@ -727,14 +783,13 @@ function gameLog(team){
   </div>`;
 }
 
-function standingsRows(rows, open){
+function standingsRows(rows){
   return `<div class="board">` + rows.map((t,i)=>{
     const sdCls = t.sd>0?"sd-pos":(t.sd<0?"sd-neg":"");
     const wp = (t.w+t.l)>0 ? t.w/(t.w+t.l) : 0;
     const form = teamGames(t.team);
     return `
-    <div class="row st-row ${i===0?'top':''} ${open===t.team?'open':''}" tabindex="0"
-         data-tlog="${t.team}" aria-expanded="${open===t.team}">
+    <div class="row st-row ${i===0?'top':''}" tabindex="0" data-tsel="${t.team}">
       <div class="st-main">
         <div class="rank">${i+1}</div>
         ${logo(t.team,'lg-lg')}
@@ -751,7 +806,6 @@ function standingsRows(rows, open){
           <div class="st-cell"><div class="d-val ${sdCls}">${t.sd>0?'+':''}${t.sd}</div><div class="d-label">Diff</div></div>
         </div>
       </div>
-      ${gameLog(t.team)}
       <div class="fill-track"></div>
       <div class="fill" style="width:${(wp*100).toFixed(1)}%"></div>
     </div>`;
@@ -762,17 +816,119 @@ function sectionVars(s){
   return `--accent-ink:${accentInk(s)};--accent-soft:${s.accentSoft};--accent-line:${s.accentLine};--accent-grad:${s.grad};--glow:${s.glow}`;
 }
 
+function teamPicker(sel){
+  return `<div class="tm-pick">
+    <button class="tm-all ${sel?'':'on'}" data-tsel="all">All teams</button>
+    ${TEAMS.map(t=>`<button class="tm-btn ${t===sel?'on':''}" data-tsel="${t}"
+      title="${t}" aria-label="${t}" aria-pressed="${t===sel}">${logo(t)}</button>`).join("")}
+  </div>`;
+}
+
+// One team: header, results, what's left, and the whole roster by position.
+function renderTeamPage(team){
+  const st = state.teams;
+  const info = teamInfo(team);
+  const tc = TEAM_COLORS[team];
+  const vars = `--accent-ink:${tc};--accent-soft:${tc}1f;--accent-line:${tc}80;`
+             + `--accent-grad:linear-gradient(90deg,${tc},${tc});--glow:${tc}55`;
+  const roster = PLAYERS.filter(p=>p.t===team);
+  const next = UPCOMING.filter(u=>u.a===team||u.b===team);
+
+  const best = (pool, key) => pool.slice().sort((x,y)=>y[key]-x[key])[0];
+  const skaters = roster.filter(p=>p.p!=="G");
+  const keepers = roster.filter(p=>p.p==="G" && p.gp>=3);
+  const leaders = [
+    ["Points",  best(skaters,"pts"), p=>p.pts],
+    ["Goals",   best(skaters,"g"),   p=>p.g],
+    ["Assists", best(skaters,"a"),   p=>p.a],
+    ["Save %",  best(keepers.length?keepers:roster.filter(p=>p.p==="G"),"svp"), p=>fmtPct(p.svp)],
+  ].filter(l=>l[1]);
+
+  view.innerHTML = `
+  <div style="${vars}">
+    <div class="sec-head" style="background:linear-gradient(135deg,${tc},#17212b)">
+      <div class="sec-eyebrow">${info.conf} · ${info.rank}${["st","nd","rd","th"][Math.min(info.rank-1,3)]} · PLL 2026</div>
+      <div class="sec-name">${info.city} ${team}</div>
+      <div class="head-logo">${logo(team)}</div>
+    </div>
+
+    ${teamPicker(team)}
+
+    <div class="tm-card">
+      <div class="tm-nums">
+        <div><div class="d-val">${info.w}\u2013${info.l}</div><div class="d-label">Record</div></div>
+        <div><div class="d-val">${info.s}</div><div class="d-label">Scores</div></div>
+        <div><div class="d-val">${info.sa}</div><div class="d-label">Against</div></div>
+        <div><div class="d-val ${info.sd>0?'sd-pos':(info.sd<0?'sd-neg':'')}">${info.sd>0?'+':''}${info.sd}</div><div class="d-label">Diff</div></div>
+        <div><div class="d-val">${roster.length}</div><div class="d-label">Players</div></div>
+      </div>
+      <div class="tm-lead">
+        ${leaders.map(([lab,p,val])=>`
+          <div><div class="tm-lead-v">${p.n} <b>${val(p)}</b></div><div class="d-label">${lab}</div></div>`).join("")}
+      </div>
+    </div>
+
+    <div class="kw-sub">Results</div>
+    ${gameLog(team)}
+
+    ${next.length ? `
+      <div class="kw-sub">Still to come</div>
+      <div class="board">
+        ${next.map(u=>{ const opp = u.a===team ? u.b : u.a;
+          return `<div class="h2h-g next">
+            <div class="h2h-meta" style="text-align:left">${shortDate(u.d)}</div>
+            <div class="h2h-sc">${logo(opp,'lg-sm')}<span>${opp}</span></div>
+            <div class="h2h-meta">${u.t} · ${u.tv}<br>${u.loc}</div>
+          </div>`; }).join("")}
+      </div>` : ''}
+
+    <div class="kw-sub">Roster</div>
+    ${TEAM_GROUPS.map(grp=>{
+      const list = roster.filter(grp.f).sort((x,y)=>y[grp.key]-x[grp.key]);
+      if (!list.length) return '';
+      return `<div class="tm-grp">${grp.label}</div>
+      <div class="board">
+        ${list.map(p=>`
+          <div class="row tm-row ${p.n===st.open?'open':''}" tabindex="0" data-name="${p.n}">
+            <div class="row-main">
+              <div class="who">
+                <div class="gname">${p.n}</div>
+                <div class="gmeta">
+                  ${grp.showPos?`<span class="pos-chip">${p.p}</span>`:''}
+                  <span class="gp">${p.gp} game${p.gp===1?'':'s'}</span>
+                </div>
+              </div>
+              <div class="stat">
+                <div class="stat-val">${grp.fmt(p[grp.key])}</div>
+                <div class="stat-label">${grp.unit}</div>
+              </div>
+            </div>
+            <div class="detail">
+              ${grp.detail(p).map(([v,l])=>`<div><div class="d-val">${v}</div><div class="d-label">${l}</div></div>`).join("")}
+            </div>
+          </div>`).join("")}
+      </div>`;
+    }).join("")}
+
+    <div class="note">
+      Tap a player for his full line. Record, scores and differential are the official standings through
+      Fri, Jul 24; results marked NEW landed after that and aren't in those totals yet.
+    </div>
+  </div>`;
+}
+
 function renderTeams(){
   const s = SECTIONS.teams;
   const st = state.teams;
+  if (st.sel){ renderTeamPage(st.sel); return; }
   let body;
   if (st.pool==="league"){
     const all = [...STANDINGS.eastern, ...STANDINGS.western]
       .sort((a,b)=> (b.w/(b.w+b.l)) - (a.w/(a.w+a.l)) || b.sd - a.sd);
-    body = standingsRows(all, st.open);
+    body = standingsRows(all);
   } else {
-    body = `<div class="conf-title">Eastern</div>` + standingsRows(STANDINGS.eastern, st.open)
-         + `<div class="conf-title">Western</div>` + standingsRows(STANDINGS.western, st.open);
+    body = `<div class="conf-title">Eastern</div>` + standingsRows(STANDINGS.eastern)
+         + `<div class="conf-title">Western</div>` + standingsRows(STANDINGS.western);
   }
   view.innerHTML = `
   <div style="${sectionVars(s)}">
@@ -780,6 +936,9 @@ function renderTeams(){
       <div class="sec-eyebrow">${s.eyebrow}</div>
       <div class="sec-name">${s.name}</div>
     </div>
+
+    ${teamPicker(null)}
+
     <div class="kw-sub" style="margin-top:0">Denver Weekend</div>
     <div class="sb">
       ${RECENT.map(g=>{
@@ -801,7 +960,12 @@ function renderTeams(){
       ${s.pools.map(x=>`<button class="pool-btn ${x.key===st.pool?'active':''}" data-pool="${x.key}">${x.label}</button>`).join("")}
     </div>
     ${body}
-    <div class="note">Tap any team for its full game log. The strip under each name is the season so far, oldest result on the left. Standings and game logs run through Friday, Jul 24 \u2014 Saturday's results are in the scoreboard above. The bar under each row is win percentage; score differential is the first tiebreaker.</div>
+    <div class="note">
+      Pick a team above — or tap any row — for its results, remaining schedule and full roster stats.
+      The strip under each name is the season so far, oldest result on the left. Standings run through
+      Friday, Jul 24; Saturday's results are in the scoreboard above. The bar under each row is win
+      percentage; score differential is the first tiebreaker.
+    </div>
   </div>`;
 }
 
@@ -1134,6 +1298,14 @@ document.addEventListener("click", e=>{
   const route = currentRoute();
   if (route==="home") return;
   const st = state[route];
+  const ts = e.target.closest("[data-tsel]");
+  if (ts){
+    st.sel = ts.dataset.tsel==="all" ? null : ts.dataset.tsel;
+    st.open = null;
+    renderSection(route);
+    window.scrollTo({top:0, behavior:"smooth"});
+    return;
+  }
   const ha = e.target.closest("[data-ha]");
   if (ha){ if (ha.dataset.ha!==st.b) st.a = ha.dataset.ha; renderSection(route); return; }
   const hb = e.target.closest("[data-hb]");
@@ -1159,12 +1331,14 @@ document.addEventListener("click", e=>{
 document.addEventListener("keydown", e=>{
   if (e.key!=="Enter" && e.key!==" ") return;
   if (!e.target.classList || !e.target.classList.contains("row")) return;
-  const key = e.target.dataset.name || e.target.dataset.tlog;
-  if (!key) return;
   const route = currentRoute();
   if (route==="home") return;
-  e.preventDefault();
   const st = state[route];
+  const sel = e.target.dataset.tsel;
+  if (sel){ e.preventDefault(); st.sel = sel==="all"?null:sel; st.open=null; renderSection(route); return; }
+  const key = e.target.dataset.name;
+  if (!key) return;
+  e.preventDefault();
   st.open = st.open===key ? null : key;
   renderSection(route);
 });
