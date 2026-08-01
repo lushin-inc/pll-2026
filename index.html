@@ -3,7 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PLL Player Stats — 2026 Season</title>
+<title>PLL 2026 Season Hub</title>
+<meta name="description" content="Standings, team pages, head-to-head, the rookie class and Rookie of the Year watch — every 2026 Premier Lacrosse League number in one place.">
+<link rel="canonical" href="https://lushin-inc.github.io/pll-2026/">
+
+<!-- Link previews (iMessage, Messages, Slack, WhatsApp, Twitter/X, Facebook).
+     og:image MUST be an absolute https URL — Apple's preview fetcher ignores
+     relative paths and data: URIs. Bump the ?v= number whenever og.png changes,
+     otherwise iMessage keeps serving the cached preview. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PLL 2026 Season Hub">
+<meta property="og:title" content="PLL 2026 Season Hub">
+<meta property="og:description" content="Standings, team pages, head-to-head, the rookie class and Rookie of the Year watch — every 2026 Premier Lacrosse League number in one place.">
+<meta property="og:url" content="https://lushin-inc.github.io/pll-2026/">
+<meta property="og:image" content="https://lushin-inc.github.io/pll-2026/og.png?v=3">
+<meta property="og:image:secure_url" content="https://lushin-inc.github.io/pll-2026/og.png?v=3">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PLL 2026 Season Hub — standings, team pages, head to head, rookies and Rookie of the Year watch, with all eight team logos.">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PLL 2026 Season Hub">
+<meta name="twitter:description" content="Standings, team pages, head-to-head, the rookie class and Rookie of the Year watch — every 2026 Premier Lacrosse League number in one place.">
+<meta name="twitter:image" content="https://lushin-inc.github.io/pll-2026/og.png?v=3">
+<meta name="twitter:image:alt" content="PLL 2026 Season Hub link preview card">
+
+<link rel="apple-touch-icon" href="https://lushin-inc.github.io/pll-2026/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="512x512" href="https://lushin-inc.github.io/pll-2026/icon-512.png">
+<meta name="apple-mobile-web-app-title" content="PLL 2026">
+<meta name="theme-color" content="#0e1215" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5f6f8" media="(prefers-color-scheme: light)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -96,6 +127,10 @@
   .theme-btn:hover{background:var(--panel-2);color:var(--ink)}
   .theme-btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
   .theme-btn .nav-ico svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ---- Mobile top bar + drawer scrim (both hidden on desktop) ---- */
+  .topbar{display:none}
+  .scrim{display:none}
 
   /* ---- Main ---- */
   .main{
@@ -456,11 +491,46 @@
   }
 
   @media(max-width:760px){
-    body{--nav-w:216px}
-    body:not(.nav-open) .sidenav{width:var(--nav-w-min)}
-    body:not(.nav-open) .nav-label, body:not(.nav-open) .nav-brand{opacity:0;pointer-events:none}
-    .main{margin-left:var(--nav-w-min) !important;padding:22px 14px 56px}
-    body.nav-open .sidenav{width:var(--nav-w);box-shadow:0 0 40px rgba(0,0,0,.3)}
+    body{--nav-w:250px}
+
+    /* the rail is gone entirely: it slides off-canvas and only returns on demand */
+    .sidenav{
+      width:var(--nav-w) !important;
+      transform:translateX(-100%);
+      transition:transform .24s ease;
+      box-shadow:none;
+      padding:14px 12px;
+    }
+    body.nav-open .sidenav{transform:none;box-shadow:0 22px 60px rgba(0,0,0,.5)}
+    /* labels always read out in the drawer, whatever the desktop collapse state is */
+    .nav-label, .nav-brand{opacity:1 !important;pointer-events:auto !important}
+    .nav-link{padding:13px 12px;font-size:15px}
+
+    .main{margin-left:0 !important;padding:0 14px 56px}
+
+    .topbar{
+      display:flex;align-items:center;gap:10px;
+      position:sticky;top:0;z-index:15;
+      margin:0 -14px 14px;padding:10px 12px;
+      background:var(--bg);border-bottom:1px solid var(--line);
+    }
+    .topbar-btn{
+      flex:0 0 42px;height:42px;border-radius:11px;border:1px solid var(--line);
+      background:var(--panel);color:var(--ink-soft);cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .topbar-btn:active{background:var(--panel-2)}
+    .topbar-btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+    .topbar-brand{
+      font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;
+      letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);
+    }
+
+    .scrim{
+      display:block;position:fixed;inset:0;z-index:19;
+      background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .24s ease;
+    }
+    body.nav-open .scrim{opacity:1;pointer-events:auto}
   }
   @media(max-width:560px){
     .stat-val{font-size:25px}.rank{font-size:21px}
@@ -528,7 +598,17 @@
   </button>
 </nav>
 
+<div class="scrim" id="scrim" hidden></div>
+
 <div class="main">
+  <div class="topbar">
+    <button class="topbar-btn" id="mobileMenu" aria-label="Open navigation"
+            aria-expanded="false" aria-controls="sidenav">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <div class="topbar-brand">PLL 2026</div>
+  </div>
   <div class="wrap" id="view"></div>
 </div>
 
@@ -934,6 +1014,12 @@ const themeBtn = document.getElementById("themeBtn");
 const themeIco = document.getElementById("themeIco");
 const themeLabel = document.getElementById("themeLabel");
 const navToggle = document.getElementById("navToggle");
+const mobileMenu = document.getElementById("mobileMenu");
+const scrim = document.getElementById("scrim");
+
+const isMobile = () => window.matchMedia("(max-width:760px)").matches;
+// The drawer always starts closed on a phone, whatever the saved desktop preference is.
+if (isMobile()) navMin = true;
 
 function applyTheme(){
   document.documentElement.setAttribute("data-theme", theme);
@@ -942,9 +1028,24 @@ function applyTheme(){
 }
 function applyNav(){
   document.body.classList.toggle("nav-min", navMin);
-  // mobile uses nav-open to expand the rail as an overlay
-  document.body.classList.toggle("nav-open", !navMin);
+  // on mobile this class slides the whole drawer in; on desktop it just widens the rail
+  const open = !navMin;
+  document.body.classList.toggle("nav-open", open);
   navToggle.setAttribute("aria-label", navMin ? "Expand navigation" : "Collapse navigation");
+  if (mobileMenu){
+    mobileMenu.setAttribute("aria-expanded", String(open && isMobile()));
+    mobileMenu.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+  }
+  if (scrim) scrim.hidden = !isMobile();
+  // stop the page scrolling behind an open drawer
+  document.body.style.overflow = (open && isMobile()) ? "hidden" : "";
+}
+
+function setNav(open){
+  navMin = !open;
+  // a phone toggle shouldn't overwrite the desktop rail preference
+  if (!isMobile()) savePref("pll-nav", navMin ? "min" : "open");
+  applyNav();
 }
 
 function accentInk(s){ return theme==="dark" ? s.accentDark : s.accent; }
@@ -1806,10 +1907,21 @@ function render(){
   window.scrollTo(0,0);
 }
 
-navToggle.addEventListener("click", ()=>{
-  navMin = !navMin;
-  savePref("pll-nav", navMin ? "min" : "open");
-  applyNav();
+navToggle.addEventListener("click", ()=> setNav(navMin));
+if (mobileMenu) mobileMenu.addEventListener("click", ()=> setNav(navMin));
+if (scrim) scrim.addEventListener("click", ()=> setNav(false));
+
+// tapping a section in the drawer should navigate and get out of the way
+document.addEventListener("click", e=>{
+  if (isMobile() && !navMin && e.target.closest(".nav-link")) setNav(false);
+});
+document.addEventListener("keydown", e=>{
+  if (e.key==="Escape" && isMobile() && !navMin) setNav(false);
+});
+// crossing the breakpoint shouldn't strand the drawer open or the page unscrollable
+window.addEventListener("resize", ()=>{
+  if (!isMobile() && document.body.style.overflow==="hidden") document.body.style.overflow="";
+  if (scrim) scrim.hidden = !isMobile();
 });
 themeBtn.addEventListener("click", ()=>{
   theme = theme==="light" ? "dark" : "light";
