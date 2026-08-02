@@ -275,6 +275,75 @@
   html[data-theme="dark"] .crest-img{background:#eef1f4;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
 
+  /* ---- Season simulator ---- */
+  .sim-note{font-size:12px;color:var(--ink-faint);text-align:right;margin-bottom:10px}
+  .sim-wrap{overflow-x:auto}
+  .sim-tbl{width:100%;min-width:880px;border-collapse:collapse}
+  .sim-tbl th{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--ink-faint);text-align:left;padding:0 10px 9px;white-space:nowrap}
+  .sim-tbl th.n{text-align:right}
+  .sim-conf td{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--ink-faint);padding:16px 10px 7px}
+  .sim-tbl tbody tr.tm{border-top:1px solid var(--line)}
+  .sim-tbl tbody tr.tm td{padding:11px 10px}
+  .sim-rank{width:26px;color:var(--ink-faint);font-size:12px;font-variant-numeric:tabular-nums}
+  .sim-team{display:flex;align-items:center;gap:9px;min-width:150px}
+  .sim-team b{font-size:14.5px;font-weight:700}
+  .sim-wl{font-variant-numeric:tabular-nums;font-size:14px;font-weight:600;text-align:right;
+    width:58px;white-space:nowrap}
+  .sim-sd{font-variant-numeric:tabular-nums;font-size:13px;text-align:right;width:48px;color:var(--ink-soft)}
+  .sim-cell{min-width:118px}
+  .sim-val{font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;margin-bottom:5px}
+  .sim-track{height:4px;border-radius:3px;background:var(--bar-track);overflow:hidden}
+  .sim-fill{height:100%;border-radius:3px}
+  .p-hi{color:#15803d} .p-mid{color:#b45309} .p-lo{color:#b91c1c}
+  html[data-theme="dark"] .p-hi{color:#4ade80}
+  html[data-theme="dark"] .p-mid{color:#fbbf24}
+  html[data-theme="dark"] .p-lo{color:#f87171}
+  .f-hi{background:#22c55e} .f-mid{background:#f5b400} .f-lo{background:#ef4444}
+  .mk{width:19px;height:19px;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;
+    vertical-align:-4px}
+  .mk-ok{stroke:#16a34a} .mk-no{stroke:#dc2626}
+  html[data-theme="dark"] .mk-ok{stroke:#4ade80}
+  html[data-theme="dark"] .mk-no{stroke:#f87171}
+  .seed-pip{width:3px;height:30px;border-radius:2px;flex:0 0 auto}
+  .sim-key{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;font-size:11.5px;color:var(--ink-soft)}
+  .sim-key span{display:flex;align-items:center;gap:6px}
+  .sim-foot{margin-top:12px;font-size:11.5px;color:var(--ink-faint);line-height:1.6}
+
+  /* what-if controls */
+  .wi-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:4px 0 12px}
+  .wi-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+  .wi-reset{border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);
+    font-size:12px;font-weight:600;padding:6px 13px;border-radius:999px;cursor:pointer}
+  .wi-reset:hover{color:var(--ink)}
+  .wi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:10px;margin-bottom:24px}
+  .wi-game{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+    box-shadow:var(--row-shadow)}
+  .wi-when{font-size:11px;color:var(--ink-faint);margin-bottom:8px}
+  .wi-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .wi-pick{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;cursor:pointer;
+    border:1px solid var(--line);background:var(--panel-2);color:var(--ink);
+    font-size:13px;font-weight:600;text-align:left;transition:background .12s,border-color .12s}
+  .wi-pick:hover{border-color:var(--accent-line)}
+  .wi-pick.on{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-ink)}
+  .wi-pick .lg{flex:0 0 auto}
+
+  /* bracket */
+  .br-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .br-conf{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 16px 6px}
+  .br-conf h4{font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--ink-faint);margin-bottom:12px}
+  .br-slot{margin-bottom:16px}
+  .br-lab{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--ink-faint);margin-bottom:7px}
+  .br-line{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:13.5px}
+  .br-line .pc{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:700;font-size:13px}
+  .br-line.dim{opacity:.55}
+  .br-final{margin-top:18px;background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;padding:16px}
+  @media (max-width:860px){ .br-cols{grid-template-columns:1fr} }
+
   /* ---- Team page ---- */
   .tm-pick{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px;align-items:center}
   .tm-all{font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;padding:0 14px;height:46px;
@@ -726,6 +795,175 @@ function ord(n){
 const fmtNum = v => Number.isInteger(v) ? v : v.toFixed(1);
 const fmt2   = v => v.toFixed(2);
 
+// ---- Season simulator -----------------------------------------------------
+// Monte Carlo over the fixtures still to play. Each team gets a rating equal to
+// its score differential per game (shrunk slightly, because ten games is a small
+// sample); a game's margin is drawn from a normal around the ratings gap. Sigma
+// and the shrink factor were fitted against the 40 games already played, so the
+// model reproduces this season's actual spread of results rather than a guess.
+const SIM_RUNS   = 10000;
+const SIM_SHRINK = 0.9;    // ratings pulled toward zero; 0.9 minimised residuals
+const SIM_SIGMA  = 5.15;   // sd of (actual margin - predicted margin), 40 games
+const SIM_TOTAL  = 23.5;   // mean combined score
+const SIM_TOT_SD = 4.4;
+const SIM_SEED   = 20260802;   // fixed so the same inputs always give the same odds
+const PLAYOFF_SPOTS = 3;       // top three in each conference qualify
+
+const CONFS = {eastern:"Eastern", western:"Western"};
+const confOf = t => STANDINGS.eastern.some(r=>r.team===t) ? "eastern" : "western";
+
+function simRatings(){
+  const sf={}, sa={}, gp={};
+  TEAMS.forEach(t=>{ sf[t]=0; sa[t]=0; gp[t]=0; });
+  GAMES.forEach(g=>{
+    sf[g.w]+=g.ws; sa[g.w]+=g.ls; gp[g.w]++;
+    sf[g.l]+=g.ls; sa[g.l]+=g.ws; gp[g.l]++;
+  });
+  const r={};
+  TEAMS.forEach(t=>{ r[t] = gp[t] ? SIM_SHRINK*(sf[t]-sa[t])/gp[t] : 0; });
+  return r;
+}
+
+// Small deterministic PRNG so the numbers hold still between renders.
+function mulberry32(a){
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a>>>15, 1 | a);
+    t = t + Math.imul(t ^ t>>>7, 61 | t) ^ t;
+    return ((t ^ t>>>14) >>> 0) / 4294967296;
+  };
+}
+function gauss(rnd){
+  let u=0,v=0; while(!u) u=rnd(); while(!v) v=rnd();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+
+// One game: returns [scoreA, scoreB] for the pair (a,b).
+function simGame(a, b, rat, rnd){
+  let m = Math.round((rat[a]-rat[b]) + SIM_SIGMA*gauss(rnd));
+  if (m === 0) m = rnd() < 0.5 ? -1 : 1;          // PLL games are settled in OT
+  let tot = Math.round(SIM_TOTAL + SIM_TOT_SD*gauss(rnd));
+  const need = Math.abs(m) + 8;
+  if (tot < need) tot = need;
+  if ((tot + m) % 2 !== 0) tot += 1;
+  return [(tot+m)/2, (tot-m)/2];
+}
+
+// Conference order: wins, then score differential.
+const seedSort = (x,y) => (y.w-x.w) || ((y.s-y.sa)-(x.s-x.sa)) || (y.s-x.s);
+
+function baseTable(){
+  const t={};
+  ["eastern","western"].forEach(c=>STANDINGS[c].forEach(r=>{
+    t[r.team]={team:r.team, conf:c, w:r.w, l:r.l, s:r.s, sa:r.sa};
+  }));
+  return t;
+}
+
+// locks: {fixtureIndex: winningTeam}
+function runSim(locks){
+  const rat = simRatings();
+  const rnd = mulberry32(SIM_SEED);
+  const z = () => Object.fromEntries(TEAMS.map(t=>[t,0]));
+  const tally = {playoff:z(), bye:z(), finalist:z(), champ:z(), pick1:z(),
+                 seed:Object.fromEntries(TEAMS.map(t=>[t,[0,0,0,0]]))};
+  const pairs = {qf:{eastern:{},western:{}}, sf:{eastern:{},western:{}}, final:{}};
+  const bump = (o,k) => o[k]=(o[k]||0)+1;
+
+  for (let run=0; run<SIM_RUNS; run++){
+    const tab = baseTable();
+    UPCOMING.forEach((u,i)=>{
+      let [sa_, sb_] = simGame(u.a, u.b, rat, rnd);
+      const forced = locks[i];
+      if (forced){                                  // respect a locked winner
+        const aWins = forced === u.a;
+        if ((sa_ > sb_) !== aWins){ const t=sa_; sa_=sb_; sb_=t; }
+      }
+      const A=tab[u.a], B=tab[u.b];
+      A.s+=sa_; A.sa+=sb_; B.s+=sb_; B.sa+=sa_;
+      if (sa_>sb_){ A.w++; B.l++; } else { B.w++; A.l++; }
+    });
+
+    const winners={};
+    ["eastern","western"].forEach(c=>{
+      const order = Object.values(tab).filter(r=>r.conf===c).sort(seedSort);
+      order.forEach((r,i)=>{ tally.seed[r.team][i]++; });
+      order.slice(0,PLAYOFF_SPOTS).forEach(r=>tally.playoff[r.team]++);
+      tally.bye[order[0].team]++;
+      // quarterfinal: 2 seed v 3 seed, winner meets the 1 seed
+      const [qa,qb] = [order[1].team, order[2].team];
+      bump(pairs.qf[c], [qa,qb].sort().join(" v "));
+      const [x,y] = simGame(qa, qb, rat, rnd);
+      const qWin = x>y ? qa : qb;
+      const one = order[0].team;
+      bump(pairs.sf[c], [one,qWin].sort().join(" v "));
+      const [p,q] = simGame(one, qWin, rat, rnd);
+      const cChamp = p>q ? one : qWin;
+      tally.finalist[cChamp]++;
+      winners[c]=cChamp;
+    });
+    bump(pairs.final, [winners.eastern,winners.western].sort().join(" v "));
+    const [fe,fw] = simGame(winners.eastern, winners.western, rat, rnd);
+    tally.champ[fe>fw ? winners.eastern : winners.western]++;
+
+    // worst overall record takes the first pick
+    const worst = Object.values(tab).sort((x,y)=>
+      (x.w-y.w) || ((x.s-x.sa)-(y.s-y.sa)) || (x.s-y.s))[0];
+    tally.pick1[worst.team]++;
+  }
+
+  const pct = o => Object.fromEntries(Object.entries(o).map(([k,v])=>[k, v/SIM_RUNS]));
+  const topPairs = o => Object.entries(o).sort((a,b)=>b[1]-a[1])
+                          .slice(0,3).map(([k,v])=>({k, p:v/SIM_RUNS}));
+  return {
+    playoff:pct(tally.playoff), bye:pct(tally.bye), finalist:pct(tally.finalist),
+    champ:pct(tally.champ), pick1:pct(tally.pick1),
+    seed:Object.fromEntries(Object.entries(tally.seed)
+          .map(([t,a])=>[t, a.map(v=>v/SIM_RUNS)])),
+    qf:{eastern:topPairs(pairs.qf.eastern), western:topPairs(pairs.qf.western)},
+    sf:{eastern:topPairs(pairs.sf.eastern), western:topPairs(pairs.sf.western)},
+    final:topPairs(pairs.final),
+  };
+}
+
+// Exhaustive check over every remaining win/loss combination. A team is
+// clinched only if it holds a playoff spot even when it loses every tiebreak,
+// and eliminated only if it misses even when it wins every tiebreak. The same
+// sweep says whether the first-round bye is still mathematically reachable.
+function clinchStatus(locks){
+  const free = UPCOMING.map((u,i)=>i).filter(i=>!(i in locks));
+  const n = free.length;
+  const inAll={}, inAny={}, byeAny={};
+  TEAMS.forEach(t=>{ inAll[t]=true; inAny[t]=false; byeAny[t]=false; });
+
+  for (let mask=0; mask < (1<<n); mask++){
+    const tab = baseTable();
+    UPCOMING.forEach((u,i)=>{
+      let win;
+      if (i in locks) win = locks[i];
+      else { const bit = free.indexOf(i); win = (mask>>bit & 1) ? u.a : u.b; }
+      const W = tab[win], L = tab[win===u.a ? u.b : u.a];
+      W.w++; L.l++;
+    });
+    ["eastern","western"].forEach(c=>{
+      const rows = Object.values(tab).filter(r=>r.conf===c);
+      rows.forEach(r=>{
+        const better = rows.filter(o=>o.team!==r.team && o.w >  r.w).length;
+        const equal  = rows.filter(o=>o.team!==r.team && o.w === r.w).length;
+        if (better + equal >= PLAYOFF_SPOTS) inAll[r.team] = false;  // worst-case
+        if (better < PLAYOFF_SPOTS) inAny[r.team] = true;            // best-case
+        if (better === 0) byeAny[r.team] = true;                     // can still top it
+      });
+    });
+  }
+  const out={};
+  TEAMS.forEach(t=>out[t] = {
+    playoff: inAll[t] ? "clinched" : (!inAny[t] ? "eliminated" : ""),
+    bye:     byeAny[t] ? "" : "eliminated",
+  });
+  return out;
+}
+
 const FIELD_DETAIL = p => [
   [p.pts,"Points"],[p.g,"Goals"],[p.g2,"2-Pt Goals"],[p.a,"Assists"],
   [p.sh,"Shots"],[fmtPct(p.shp),"Shooting %"],[p.gb,"Groundballs"],
@@ -765,6 +1003,7 @@ const ICONS = {
   goalies:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 10h18M8 5v14M16 5v14"/></svg>',
   rookie:'<svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .8-4.4 4.2 1.1 6.1L12 16.8 6.7 19.7l1.1-6.1L3.4 9.4l6-.8z"/></svg>',
   roy:'<svg viewBox="0 0 24 24"><path d="M6 4h12v6a6 6 0 0 1-12 0z"/><path d="M6 6H3.5a2.5 2.5 0 0 0 2.5 4.5"/><path d="M18 6h2.5a2.5 2.5 0 0 1-2.5 4.5"/><path d="M10 16.5L9 21h6l-1-4.5"/><path d="M7.5 21h9"/></svg>',
+  sim:'<svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>',
   h2h:'<svg viewBox="0 0 24 24"><path d="M3 8h12l-3.5-3.5"/><path d="M21 16H9l3.5 3.5"/></svg>',
   kirst:'<svg viewBox="0 0 24 24"><path d="M8 3h8v5a4 4 0 0 1-8 0V3z"/><path d="M8 5H5.5a2.5 2.5 0 0 0 2.5 4.5"/><path d="M16 5h2.5a2.5 2.5 0 0 1-2.5 4.5"/><path d="M10.5 12.5L9.5 21h5l-1-8.5"/><path d="M8 21h8"/></svg>',
   sun:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>',
@@ -807,6 +1046,14 @@ const SECTIONS = {
     accent:"#0d7a6c", accentDark:"#3cc2ae",
     accentSoft:"rgba(15,138,122,.12)", accentLine:"rgba(15,138,122,.5)",
     activeInk:"#fff"
+  },
+  sim:{
+    name:"Simulator", eyebrow:"PLL 2026 \u00b7 Rest of season", sim:true, ico:"sim",
+    grad:"linear-gradient(135deg,#1d4ed8,#0f2a5e)", glow:"rgba(29,78,216,.28)",
+    accent:"#1d4ed8", accentDark:"#7aa5f5",
+    accentSoft:"rgba(29,78,216,.12)", accentLine:"rgba(29,78,216,.5)",
+    activeInk:"#fff",
+    pools:[{key:"standings",label:"Standings"},{key:"bracket",label:"Bracket"}]
   },
   kirst:{
     name:"Kirst Watch", eyebrow:"PLL 2026 · Single-season goals record", record:true, ico:"kirst",
@@ -906,7 +1153,7 @@ const SECTIONS = {
   }
 };
 
-const ORDER = ["teams","h2h","rookies","roy","kirst","attack","midfield","faceoff","defense","goalies"];
+const ORDER = ["teams","sim","h2h","rookies","roy","kirst","attack","midfield","faceoff","defense","goalies"];
 
 const state = {};
 ORDER.forEach(k=>{
@@ -914,6 +1161,7 @@ ORDER.forEach(k=>{
   state[k] = { sort:s.sorts?s.sorts[0].key:null, pool:s.pools?s.pools[0].key:null, team:"all", open:null };
 });
 state.teams.sel = null;
+state.sim.locks = {};
 state.h2h.a = "Whipsnakes";
 state.h2h.b = "Waterdogs";
 
@@ -976,6 +1224,7 @@ function renderHome(){
       ${ORDER.map(k=>{
         const s = SECTIONS[k];
         const count = s.standings ? "8 teams"
+          : s.sim ? UPCOMING.length + " games left"
           : s.h2h ? "28 matchups"
           : s.tileNote ? s.tileNote
           : PLAYERS.filter(s.filter).length + " players";
@@ -984,7 +1233,8 @@ function renderHome(){
             : k==="rookies" ? `<div class="tile-logos">${["Duke","Syracuse","Princeton","Harvard"].map(x=>crest(x,'lg-xs')).join("")}</div>`
             : k==="roy" ? `<div class="tile-logos">${ROY.slice(0,3).map(r=>avatar(PLAYERS.find(p=>p.n===r.n),'av-sm')).join("")}</div>`
             : k==="h2h" ? `<div class="tile-logos">${logo(state.h2h.a)}${logo(state.h2h.b)}</div>`
-            : k==="kirst" ? `<div class="tile-logos">${logo("Waterdogs")}</div>` : ''}
+            : k==="kirst" ? `<div class="tile-logos">${logo("Waterdogs")}</div>`
+            : k==="sim" ? `<div class="tile-logos">${logo(STANDINGS.western[0].team)}${logo(STANDINGS.eastern[0].team)}</div>` : ''}
           <div class="tile-eyebrow">${count}</div>
           <div class="tile-name">${s.name}</div>
         </a>`;
@@ -1721,12 +1971,165 @@ function renderKirst(){
   </div>`;
 }
 
+// ---- Simulator view -------------------------------------------------------
+const simPct = v =>
+  v >= 0.99995 ? ">99.99%" :
+  v <= 0.0001  ? "<0.01%"  :
+  v <  0.001   ? (v*100).toFixed(2)+"%" :
+  v <  0.0995  ? (v*100).toFixed(1)+"%" : (v*100).toFixed(0)+"%";
+const simTone = v => v >= 0.6 ? "hi" : v >= 0.3 ? "mid" : "lo";
+const MARK_OK = '<svg class="mk mk-ok" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>';
+const MARK_NO = '<svg class="mk mk-no" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+
+// One probability cell: a marker when the outcome is already settled, otherwise
+// the number over a bar scaled to the probability.
+function simCell(v, settled){
+  if (settled === "clinched")   return `<td class="sim-cell" title="Clinched">${MARK_OK}</td>`;
+  if (settled === "eliminated") return `<td class="sim-cell" title="Eliminated">${MARK_NO}</td>`;
+  const t = simTone(v);
+  return `<td class="sim-cell">
+    <div class="sim-val p-${t}">${simPct(v)}</div>
+    <div class="sim-track"><div class="sim-fill f-${t}" style="width:${Math.max(v*100,0.6).toFixed(1)}%"></div></div>
+  </td>`;
+}
+
+function renderSim(){
+  const s = SECTIONS.sim, st = state.sim;
+  const pool = (s.pools.find(x=>x.key===st.pool) || s.pools[0]).key;
+  const locks = st.locks || (st.locks = {});
+  const R = runSim(locks);
+  const C = clinchStatus(locks);
+  const nLocked = Object.keys(locks).length;
+
+  const whatIf = `
+    <div class="wi-head">
+      <div class="wi-title">Games left — click a winner to lock it in</div>
+      ${nLocked ? `<button class="wi-reset" data-simreset="1">Clear ${nLocked} pick${nLocked===1?'':'s'}</button>` : ''}
+    </div>
+    <div class="wi-grid">
+      ${UPCOMING.map((u,i)=>`
+        <div class="wi-game">
+          <div class="wi-when">${shortDate(u.d)} · ${u.t}${u.loc?` · ${u.loc}`:''}</div>
+          <div class="wi-pair">
+            ${[u.a,u.b].map(t=>`
+              <button class="wi-pick ${locks[i]===t?'on':''}" data-simpick="${i}|${t}">
+                ${logo(t,'lg-xs')}<span>${t}</span>
+              </button>`).join("")}
+          </div>
+        </div>`).join("")}
+    </div>`;
+
+  let body;
+  if (pool === "bracket"){
+    const seedLine = (team, p, dim) => `
+      <div class="br-line ${dim?'dim':''}">${logo(team,'lg-xs')}<span>${team}</span>
+        <span class="pc p-${simTone(p)}">${simPct(p)}</span></div>`;
+    const pairLine = x => {
+      const [a,b] = x.k.split(" v ");
+      return `<div class="br-line">${logo(a,'lg-xs')}<span>${a}</span>
+        <span style="color:var(--ink-faint)">v</span>
+        ${logo(b,'lg-xs')}<span>${b}</span>
+        <span class="pc p-${simTone(x.p)}">${simPct(x.p)}</span></div>`;
+    };
+    const confBlock = (key) => {
+      const teams = STANDINGS[key].map(r=>r.team);
+      const bySeed = n => teams.map(t=>({t, p:R.seed[t][n]}))
+                               .sort((a,b)=>b.p-a.p).filter(x=>x.p>0).slice(0,3);
+      const qf = R.qf[key], sf = R.sf[key];
+      return `<div class="br-conf">
+        <h4>${CONFS[key]}</h4>
+        <div class="br-slot"><div class="br-lab">1 seed · bye to the semifinal</div>
+          ${bySeed(0).map((x,i)=>seedLine(x.t,x.p,i>0)).join("")}</div>
+        <div class="br-slot"><div class="br-lab">Quarterfinal · 2 v 3</div>
+          ${qf.length?qf.map(pairLine).join(""):'<div class="br-line dim">Not yet decided</div>'}</div>
+        <div class="br-slot"><div class="br-lab">Semifinal</div>
+          ${sf.length?sf.map(pairLine).join(""):'<div class="br-line dim">Not yet decided</div>'}</div>
+        <div class="br-slot"><div class="br-lab">Wins the conference</div>
+          ${teams.map(t=>({t,p:R.finalist[t]})).sort((a,b)=>b.p-a.p)
+                 .map((x,i)=>seedLine(x.t,x.p,i>1)).join("")}</div>
+      </div>`;
+    };
+    body = `<div class="br-cols">${confBlock("western")}${confBlock("eastern")}</div>
+      <div class="br-final">
+        <div class="br-lab">Championship · likeliest matchups</div>
+        ${R.final.map(pairLine).join("")}
+        <div class="br-lab" style="margin-top:16px">Wins it all</div>
+        ${TEAMS.map(t=>({t,p:R.champ[t]})).sort((a,b)=>b.p-a.p).slice(0,4)
+               .map((x,i)=>seedLine(x.t,x.p,i>2)).join("")}
+      </div>`;
+  } else {
+    const confRows = key => {
+      const rows = STANDINGS[key].map(r=>r.team)
+        .map(t=>({t, ...Object.fromEntries(["playoff","bye","finalist","champ","pick1"]
+                    .map(k=>[k,R[k][t]]))}))
+        .sort((a,b)=>b.playoff-a.playoff || b.bye-a.bye);
+      // ordered as the conference table stands today, not by odds
+      const order = STANDINGS[key];
+      return `<tr class="sim-conf"><td colspan="8">${CONFS[key]}</td></tr>` +
+        order.map((r,i)=>{
+          const t = r.team;
+          const pip = i===0 ? "#22c55e" : i<PLAYOFF_SPOTS ? "#3b82f6" : "transparent";
+          return `<tr class="tm">
+            <td><div style="display:flex;align-items:center;gap:9px">
+              <span class="seed-pip" style="background:${pip}"></span>
+              <span class="sim-rank">${i+1}</span>
+              <span class="sim-team">${logo(t,'lg-xs')}<b>${t}</b></span>
+            </div></td>
+            <td class="sim-wl">${r.w}–${r.l}</td>
+            <td class="sim-sd">${r.sd>0?'+':''}${r.sd}</td>
+            ${simCell(R.playoff[t],  C[t].playoff)}
+            ${simCell(R.bye[t],      C[t].bye==="eliminated" ? "eliminated" : "")}
+            ${simCell(R.finalist[t], "")}
+            ${simCell(R.champ[t],    "")}
+            ${simCell(R.pick1[t],    "")}
+          </tr>`;
+        }).join("");
+    };
+    body = `<div class="sim-wrap"><table class="sim-tbl">
+      <thead><tr>
+        <th>Team</th><th class="n">W–L</th><th class="n">SD</th>
+        <th>Playoffs</th><th>1st rd bye</th><th>Finalist</th><th>Champion</th><th>#1 pick</th>
+      </tr></thead>
+      <tbody>${confRows("western")}${confRows("eastern")}</tbody>
+    </table></div>
+    <div class="sim-key">
+      <span><span class="seed-pip" style="background:#22c55e;height:12px"></span>Bye to the semifinal</span>
+      <span><span class="seed-pip" style="background:#3b82f6;height:12px"></span>Into the quarterfinal</span>
+      <span>${MARK_OK} Clinched</span><span>${MARK_NO} Eliminated</span>
+    </div>`;
+  }
+
+  view.innerHTML = `
+  <div style="${sectionVars(s)}">
+    <div class="sec-head" style="background:${s.grad}">
+      <div class="sec-eyebrow">${s.eyebrow}</div>
+      <div class="sec-name">Simulator</div>
+    </div>
+    <div class="pool-row">
+      ${s.pools.map(x=>`<button class="pool-btn ${x.key===pool?'active':''}" data-pool="${x.key}">${x.label}</button>`).join("")}
+    </div>
+    ${whatIf}
+    <div class="sim-note">${SIM_RUNS.toLocaleString()} simulations${nLocked?` · ${nLocked} result${nLocked===1?'':'s'} locked`:''}</div>
+    ${body}
+    <div class="sim-foot">
+      Each team is rated on score differential per game; every remaining fixture is
+      drawn from a normal distribution around the gap between the two ratings, using
+      the spread of margins actually seen across this season's ${GAMES.length} completed games.
+      Top three in each conference make the playoffs, the 1 seed gets a bye, and the
+      quarterfinal and semifinal stay inside the conference. Score differential is the
+      first tiebreaker. Clinched and eliminated are checked exhaustively against every
+      remaining win–loss combination, not inferred from the simulations.
+    </div>
+  </div>`;
+}
+
 function renderSection(key){
   if (SECTIONS[key].standings){ renderTeams(); return; }
   if (SECTIONS[key].record){ renderKirst(); return; }
   if (SECTIONS[key].h2h){ renderH2H(); return; }
   if (SECTIONS[key].rookieboard){ renderRookies(); return; }
   if (SECTIONS[key].roy){ renderROY(); return; }
+  if (SECTIONS[key].sim){ renderSim(); return; }
   const s = SECTIONS[key];
   const st = state[key];
   const sort = s.sorts.find(x=>x.key===st.sort) || s.sorts[0];
@@ -1853,6 +2256,14 @@ document.addEventListener("click", e=>{
   if (sb){ st.sort = sb.dataset.sort; renderSection(route); return; }
   const tb = e.target.closest("[data-team]");
   if (tb){ st.team = tb.dataset.team; renderSection(route); return; }
+  const sp = e.target.closest("[data-simpick]");
+  if (sp){
+    const [i,t] = sp.dataset.simpick.split("|");
+    if (state.sim.locks[i] === t) delete state.sim.locks[i];
+    else state.sim.locks[i] = t;
+    renderSection(route); return;
+  }
+  if (e.target.closest("[data-simreset]")){ state.sim.locks = {}; renderSection(route); return; }
   const pb = e.target.closest("[data-pool]");
   if (pb){ st.pool = pb.dataset.pool; st.open=null; renderSection(route); return; }
   const row = e.target.closest(".row");
