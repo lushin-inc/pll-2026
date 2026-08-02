@@ -179,6 +179,9 @@
   .rk-chip{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.08em;
     text-transform:uppercase;padding:2px 6px;border-radius:5px;
     color:var(--accent-ink);background:var(--accent-soft);border:1px solid var(--accent-line)}
+  .st-chip{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;padding:2px 6px;border-radius:5px;
+    color:var(--ink-soft);background:var(--bar-track);border:1px solid var(--line)}
   .pos-chip{font-size:11px;font-weight:600;letter-spacing:.05em;padding:3px 8px;border-radius:6px;background:var(--panel-2);color:var(--ink-soft)}
   .gp{font-size:12px;color:var(--ink-faint)}
   .stat{text-align:right}
@@ -579,6 +582,23 @@ const TEAM_COLORS = {
 const TEAMS = Object.keys(TEAM_COLORS);
 
 // Standings — order preserved from PLL table. SD is first tiebreaker.
+// ---- Goalie depth chart --------------------------------------------------
+// The current starter for each team. Change a name here when a team switches
+// keepers; the Goalies page reads its "Starters" filter straight from this.
+const GOALIE_STARTERS = {
+  Archers:"Brett Dobson",   Atlas:"Liam Entenmann",  Cannons:"JC Higginbotham",
+  Chaos:"Blaze Riorden",    Outlaws:"Logan McNaney", Redwoods:"Dillon Ward",
+  Waterdogs:"Sean Byrne",   Whipsnakes:"Emmet Carroll",
+};
+// Players who will not feature again this season. The value is the label shown
+// on their row; they stay in the rankings because their games still happened.
+const PLAYER_STATUS = {
+  "Matt DeLuca":"Out for season",
+  "Colin Kirst":"Benched",
+};
+const statusChip = p => PLAYER_STATUS[p.n]
+  ? `<span class="st-chip">${PLAYER_STATUS[p.n]}</span>` : "";
+
 const STANDINGS = {
   eastern:[
     {city:"Philadelphia",team:"Waterdogs",w:7,l:3,s:122,sa:118,sd:4},
@@ -674,7 +694,7 @@ const ROY = [
    why:"The No. 2 overall pick and, by scouting consensus, the best pure shooter in the class \u2014 dangerous with either hand from any spot on the field. He has appeared in more games than most of the class and scores in volume for Boston.",
    risk:"Almost all of his production is goals; the assist and possession numbers that round out a resume are thin."},
   {n:"Sean Byrne", tier:"Wild card",
-   why:"Co-winner of the 2026 Kelly Award as the best goalie in Division I, undrafted out of Army, and now <b>starting for the Waterdogs</b> after Matt DeLuca went on IR. Goalie is the toughest position to break into in this league, which makes the run remarkable.",
+   why:"Co-winner of the 2026 Kelly Award as the best goalie in Division I, undrafted out of Army, and now <b>Philadelphia's starter for the rest of the season</b> with Matt DeLuca out for the year. His .575 save percentage is the better of the two, and he has the job for every remaining game. Goalie is the toughest position to break into in this league, which makes the run remarkable.",
    risk:"A short sample in net and a late start. Goalies rarely win rookie awards decided largely on offensive counting stats."},
   {n:"Aidan Maguire", tier:"The No. 1 pick",
    why:"The first short-stick defensive midfielder ever taken first overall in a professional lacrosse draft. ESPN charted a real second-half turn: opponents shot 6-for-17 with him as the closest defender before the All-Star Game and <b>0-for-3 after</b>.",
@@ -882,7 +902,7 @@ const SECTIONS = {
       {key:"sv",label:"Total Saves",fmt:fmtNum,unit:"Saves"},
       {key:"clp",label:"Clean Save %",fmt:fmtPct,unit:"Clean %"},
     ],
-    pools:[{key:"reg",label:"Starters (6+ games)",f:p=>p.gp>=6},{key:"all",label:"Everyone who's played",f:p=>true}]
+    pools:[{key:"reg",label:"Starters",f:p=>GOALIE_STARTERS[p.t]===p.n},{key:"all",label:"Everyone who's played",f:p=>true}]
   }
 };
 
@@ -1431,6 +1451,7 @@ function renderPlayer(name){
           ${logo(p.t,'lg-sm')}<span>${p.t}</span>
           <span class="pos-chip">${p.p}</span>
           <span>${p.gp} game${p.gp===1?'':'s'}</span>
+          ${statusChip(p)}
           ${rk ? `${crest(rk.school,'crest-sm')}<span>${rk.school}</span>
                  <span class="rk-chip" title="${rookieTag(p.n)}">Rookie</span>` : ''}
         </div>
@@ -1756,6 +1777,7 @@ function renderSection(key){
                 ${logo(p.t,'lg-xs')}<span class="tname">${p.t}</span>
                 ${s.showPos?`<span class="pos-chip">${p.p}</span>`:''}
                 ${isRookie(p)?`<span class="rk-chip" title="${rookieTag(p.n)}">Rookie</span>`:''}
+                ${statusChip(p)}
                 <span class="gp">${p.gp} game${p.gp===1?'':'s'}</span>
               </div>
             </div>
