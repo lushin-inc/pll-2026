@@ -317,13 +317,16 @@
   .sq{width:44px;height:44px;border-radius:13px;flex:0 0 auto;
     display:inline-flex;align-items:center;justify-content:center;
     font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;letter-spacing:.04em;
-    color:#fff;background:var(--sq-grad,linear-gradient(135deg,#4f46e5,#1e1b4b));
-    box-shadow:0 3px 12px var(--sq-glow,rgba(79,70,229,.3))}
+    color:#fff;background:linear-gradient(135deg,#4f46e5,#1e1b4b);
+    box-shadow:0 3px 12px rgba(79,70,229,.3)}
+  .sq-ca{background:linear-gradient(135deg,#dc2626,#7f1d1d);box-shadow:0 3px 12px rgba(220,38,38,.32)}
+  .sq-intl{background:linear-gradient(135deg,#d97706,#78350f);box-shadow:0 3px 12px rgba(217,119,6,.3)}
   .sq-sm{width:26px;height:26px;border-radius:8px;font-size:11px;box-shadow:none}
   .sq-lg{width:52px;height:52px;border-radius:15px;font-size:21px}
   .sq-xl{width:84px;height:84px;border-radius:24px;font-size:33px}
   .sq-tile{width:30px;height:30px;border-radius:9px;font-size:12.5px;box-shadow:none;
     background:rgba(255,255,255,.18)}
+  .sq.sq-tile{background:rgba(255,255,255,.18)}
 
   /* ---- Colleges ---- */
   .csearch{width:100%;height:52px;padding:0 16px;margin-bottom:16px;
@@ -642,6 +645,8 @@
     .cl-nm{font-size:34px}
     .smark-xl{width:64px;height:64px}
     .sq-xl{width:64px;height:64px;border-radius:19px;font-size:25px}
+    /* long names like Pennsylvania shouldn't snap mid-word on a phone */
+    .ccard-nm{font-size:13.5px;overflow-wrap:break-word;hyphens:auto}
     .rb-right{grid-column:1/-1;justify-content:flex-end}
     .roy-lead{grid-template-columns:1fr;text-align:center;justify-items:center}
     .roy-nm{font-size:31px}
@@ -1387,8 +1392,27 @@ const townOf  = n => (HOME[n] || ["", ""])[1];
 const homeLabel = n => { const t = townOf(n), a = homeOf(n); return t ? t + ", " + a : (STATE_NAME[a] || a); };
 const stateHref = a => "#state/" + encodeURIComponent(a);
 
-// The square that stands in for a logo: the abbreviation, nothing else.
-const square = (ab, cls) => `<span class="sq ${cls||''}" title="${esc(STATE_NAME[ab]||ab)}">${ab}</span>`;
+// Two-letter codes are states and provinces; three-letter codes are countries.
+const CA_PROV = ["ON","QC","BC","AB","MB","SK","NS","NB","NL","PE","YT","NT","NU"];
+const regionOf = ab => CA_PROV.includes(ab) ? "CA" : (ab.length === 3 ? "INTL" : "US");
+const REGION_STYLE = {
+  US:  {grad:"linear-gradient(135deg,#4f46e5,#1e1b4b)", glow:"rgba(79,70,229,.3)",
+        accent:"#4338ca", accentDark:"#a5b4fc", soft:"rgba(79,70,229,.12)", line:"rgba(79,70,229,.5)"},
+  CA:  {grad:"linear-gradient(135deg,#dc2626,#7f1d1d)", glow:"rgba(220,38,38,.32)",
+        accent:"#b91c1c", accentDark:"#fca5a5", soft:"rgba(220,38,38,.12)", line:"rgba(220,38,38,.5)"},
+  INTL:{grad:"linear-gradient(135deg,#d97706,#78350f)", glow:"rgba(217,119,6,.3)",
+        accent:"#a35408", accentDark:"#fbbf24", soft:"rgba(217,119,6,.14)", line:"rgba(217,119,6,.55)"},
+};
+const REGIONS = [
+  {key:"all",  label:"All"},
+  {key:"US",   label:"United States"},
+  {key:"CA",   label:"Canada"},
+  {key:"INTL", label:"Overseas"},
+];
+
+// The square that stands in for a logo: the abbreviation, nothing else. Colour
+// says which country it belongs to — indigo US, red Canada, amber everywhere else.
+const square = (ab, cls) => `<span class="sq sq-${regionOf(ab).toLowerCase()} ${cls||''}" title="${esc(STATE_NAME[ab]||ab)}">${ab}</span>`;
 
 // One entry per state with a man on a roster, with his 2026 totals rolled up.
 function stateList(){
@@ -1803,6 +1827,7 @@ ORDER.forEach(k=>{
 state.teams.sel = null;
 state.colleges.q = "";
 state.states.q = "";
+state.states.reg = "all";
 state.h2h.a = "Whipsnakes";
 state.h2h.b = "Waterdogs";
 
@@ -2564,8 +2589,9 @@ function paintColleges(){
     box.innerHTML = `<div class="h2h-none">No school matches \u201c${esc(state.colleges.q)}\u201d.</div>`;
     return;
   }
+  const men = list.reduce((n,c)=>n+c.ps.length,0);
   box.innerHTML = `<div class="ccount">${list.length} school${list.length===1?'':'s'} \u00b7 ${
-      list.reduce((n,c)=>n+c.ps.length,0)} players</div>
+      men} player${men===1?'':'s'}</div>
     <div class="cgrid">${list.map(c=>`
       <a class="ccard" href="${collegeHref(c.name)}">
         <div class="ccard-mk">${schoolMark(c.name,'smark-lg')}</div>
@@ -2703,13 +2729,19 @@ function paintStates(){
   const box = document.getElementById("sgrid");
   if (!box) return;
   const q = (state.states.q||"").trim().toLowerCase();
-  const list = stateSorted().filter(c=>c.name.toLowerCase().includes(q) || c.ab.toLowerCase().includes(q));
+  const reg = state.states.reg || "all";
+  const list = stateSorted()
+    .filter(c=>reg==="all" || regionOf(c.ab)===reg)
+    .filter(c=>c.name.toLowerCase().includes(q) || c.ab.toLowerCase().includes(q));
   if (!list.length){
-    box.innerHTML = `<div class="h2h-none">No state matches \u201c${esc(state.states.q)}\u201d.</div>`;
+    box.innerHTML = `<div class="h2h-none">${q ? `No state matches \u201c${esc(state.states.q)}\u201d.`
+      : "Nobody in the league this year is from there."}</div>`;
     return;
   }
-  box.innerHTML = `<div class="ccount">${list.length} state${list.length===1?'':'s'} \u00b7 ${
-      list.reduce((n,c)=>n+c.ps.length,0)} players</div>
+  const noun = reg==="CA" ? ["province","provinces"] : reg==="INTL" ? ["country","countries"] : ["state","states"];
+  const men = list.reduce((n,c)=>n+c.ps.length,0);
+  box.innerHTML = `<div class="ccount">${list.length} ${noun[list.length===1?0:1]} \u00b7 ${
+      men} player${men===1?'':'s'}</div>
     <div class="cgrid">${list.map(c=>`
       <a class="ccard" href="${stateHref(c.ab)}">
         <div class="ccard-mk">${square(c.ab,'sq-lg')}</div>
@@ -2722,8 +2754,7 @@ function renderStates(){
   const s = SECTIONS.states, st = state.states;
   const all = stateList();
   const top = all.slice().sort((a,b)=>b.ps.length-a.ps.length)[0];
-  const abroad = all.filter(c=>["ON","BC","AB","QC","MB","SK","NS","NB","NL","PE"].includes(c.ab)
-                            || c.ab.length===3).reduce((n,c)=>n+c.ps.length,0);
+  const inReg = r => all.filter(c=>regionOf(c.ab)===r).reduce((n,c)=>n+c.ps.length,0);
   view.innerHTML = `
   <div style="${sectionVars(s)};--sq-grad:${s.grad};--sq-glow:${s.glow}">
     <div class="sec-head" style="background:${s.grad}">
@@ -2734,17 +2765,25 @@ function renderStates(){
       <div><div class="d-val">${all.length}</div><div class="d-label">States</div></div>
       <div><div class="d-val">${all.reduce((n,c)=>n+c.ps.length,0)}</div><div class="d-label">Players</div></div>
       <div><div class="d-val">${top.ps.length}</div><div class="d-label">From ${top.name}</div></div>
-      <div><div class="d-val">${abroad}</div><div class="d-label">From outside the US</div></div>
+      <div><div class="d-val">${inReg("CA")}</div><div class="d-label">From Canada</div></div>
     </div>
     <input class="csearch" id="sq" type="search" placeholder="Search a state"
       value="${esc(st.q||"")}" oninput="state.states.q=this.value;paintStates()">
+    <div class="pool-row" style="margin-bottom:10px">
+      ${REGIONS.map(r=>{
+        const on = (st.reg||"all")===r.key;
+        const g = r.key==="all" ? s.grad : REGION_STYLE[r.key].grad;
+        return `<button class="pool-btn ${on?'active':''}" ${on?`style="background:${g};color:#fff;border-color:transparent"`:''} data-reg="${r.key}">${r.label}</button>`;
+      }).join("")}
+    </div>
     <div class="pool-row">
       ${s.pools.map(x=>`<button class="pool-btn ${x.key===st.pool?'active':''}" data-pool="${x.key}">${x.label}</button>`).join("")}
     </div>
     <div id="sgrid"></div>
     <div class="note">
-      Tap a state for its roster and its 2026 totals. Canadians sit under their province and
-      internationals under their country. Stats through Fri, Jul 31.
+      Tap a state for its roster and its 2026 totals. Squares are coloured by country \u2014
+      indigo for the United States, red for Canada, amber for everywhere else. Canadians sit
+      under their province. Stats through Fri, Jul 31.
     </div>
   </div>`;
   paintStates();
@@ -2791,8 +2830,12 @@ function renderState(ab){
     [c.g,"Goals"], [c.a,"Assists"], [c.gb,"Groundballs"], [c.ct,"Caused TOs"],
   ];
   if (c.ps.some(p=>p.p==="G")) nums.push([c.sv,"Saves"]);
+  // The page takes the colour of its country, the way a section takes its own gradient.
+  const rs = REGION_STYLE[regionOf(c.ab)];
+  const vars = `--accent-ink:${theme==="dark"?rs.accentDark:rs.accent};--accent-soft:${rs.soft};`
+             + `--accent-line:${rs.line};--glow:${rs.glow};--sq-grad:${rs.grad};--sq-glow:${rs.glow}`;
   view.innerHTML = `
-  <div style="${sectionVars(s)};--sq-grad:${s.grad};--sq-glow:${s.glow}">
+  <div style="${vars}">
     <a class="pp-back" href="#states">\u2190 All states</a>
     <div class="cl-hd">
       ${square(c.ab,'sq-xl')}
@@ -3213,6 +3256,8 @@ document.addEventListener("click", e=>{
   if (sb){ st.sort = sb.dataset.sort; renderSection(route); return; }
   const tb = e.target.closest("[data-team]");
   if (tb){ st.team = tb.dataset.team; renderSection(route); return; }
+  const rg = e.target.closest("[data-reg]");
+  if (rg){ st.reg = rg.dataset.reg; renderSection(route); return; }
   const pb = e.target.closest("[data-pool]");
   if (pb){ st.pool = pb.dataset.pool; st.open=null; renderSection(route); return; }
   const row = e.target.closest(".row");
