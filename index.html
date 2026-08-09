@@ -1260,11 +1260,12 @@ function markFail(img){
 }
 
 // One entry per school with a man on a roster, with his 2026 totals rolled up.
-function collegeList(){
+// Pass a position key to count only that group.
+function collegeList(pos){
   const m = {};
   PLAYERS.forEach(p=>{
     const c = collegeOf(p.n);
-    if (!c) return;
+    if (!c || !posOk(p, pos || "all")) return;
     const e = m[c] || (m[c] = {name:c, ps:[], pts:0, g:0, a:0, gb:0, ct:0, sv:0, played:0, teams:new Set()});
     e.ps.push(p);
     e.pts += p.pts; e.g += p.g; e.a += p.a; e.gb += p.gb; e.ct += p.ct; e.sv += p.sv;
@@ -1274,6 +1275,30 @@ function collegeList(){
   return Object.values(m);
 }
 const collegeHref = c => "#college/" + encodeURIComponent(c);
+
+// Position filter, shared by the Colleges and Home States boards. Defense keeps
+// close D, long-stick and short-stick middies together, the way the Defense
+// leaderboard does.
+const POS_GROUPS = {A:["A"], M:["M"], FO:["FO"], D:["D","LSM","SSDM"], G:["G"]};
+const POS_FILTERS = [
+  {key:"all",label:"All"}, {key:"A",label:"Attack"}, {key:"M",label:"Midfield"},
+  {key:"FO",label:"Faceoff"}, {key:"D",label:"Defense"}, {key:"G",label:"Goalies"},
+];
+// Proper lacrosse nouns, so a filtered heading reads "2 goalies" rather than
+// "2 goalies players".
+const POS_NOUN = {
+  all:["player","players"], A:["attackman","attackmen"], M:["midfielder","midfielders"],
+  FO:["faceoff man","faceoff men"], D:["defenseman","defensemen"], G:["goalie","goalies"],
+};
+const posOk    = (p, k) => k==="all" || (POS_GROUPS[k]||[]).includes(p.p);
+const posNoun  = (k, n) => POS_NOUN[k||"all"][n===1 ? 0 : 1];
+// For sentences: "every Duke man" when unfiltered, "every Duke defenseman" when not.
+const posMan   = k => (!k || k==="all") ? "man" : POS_NOUN[k][0];
+const posRow   = (sel, grad) => `<div class="pool-row" style="margin-bottom:10px">${
+  POS_FILTERS.map(x=>{
+    const on = (sel||"all")===x.key;
+    return `<button class="pool-btn ${on?'active':''}" ${on?`style="background:${grad};color:#fff;border-color:transparent"`:''} data-pos="${x.key}">${x.label}</button>`;
+  }).join("")}</div>`;
 // Players with no college on file — Dhane Smith came up through Canadian junior
 // and the NLL rather than the NCAA — are simply absent from the section.
 const noCollege = () => PLAYERS.filter(p=>!collegeOf(p.n));
@@ -1415,11 +1440,12 @@ const REGIONS = [
 const square = (ab, cls) => `<span class="sq sq-${regionOf(ab).toLowerCase()} ${cls||''}" title="${esc(STATE_NAME[ab]||ab)}">${ab}</span>`;
 
 // One entry per state with a man on a roster, with his 2026 totals rolled up.
-function stateList(){
+// Pass a position key to count only that group.
+function stateList(pos){
   const m = {};
   PLAYERS.forEach(p=>{
     const a = homeOf(p.n);
-    if (!a) return;
+    if (!a || !posOk(p, pos || "all")) return;
     const e = m[a] || (m[a] = {ab:a, name:STATE_NAME[a]||a, ps:[], pts:0, g:0, a:0, gb:0, ct:0, sv:0, played:0, teams:new Set()});
     e.ps.push(p);
     e.pts += p.pts; e.g += p.g; e.a += p.a; e.gb += p.gb; e.ct += p.ct; e.sv += p.sv;
@@ -1828,6 +1854,8 @@ state.teams.sel = null;
 state.colleges.q = "";
 state.states.q = "";
 state.states.reg = "all";
+state.states.pos = "all";
+state.colleges.pos = "all";
 state.h2h.a = "Whipsnakes";
 state.h2h.b = "Waterdogs";
 
@@ -2574,7 +2602,7 @@ function renderPlayer(name){
 // The grid repaints on its own so typing in the search box never loses focus.
 function collegeSorted(){
   const st = state.colleges;
-  const list = collegeList();
+  const list = collegeList(st.pos);
   if (st.pool==="az")  return list.sort((a,b)=>a.name.localeCompare(b.name));
   if (st.pool==="pts") return list.sort((a,b)=>b.pts-a.pts || b.ps.length-a.ps.length || a.name.localeCompare(b.name));
   return list.sort((a,b)=>b.ps.length-a.ps.length || b.pts-a.pts || a.name.localeCompare(b.name));
@@ -2586,7 +2614,8 @@ function paintColleges(){
   const q = (state.colleges.q||"").trim().toLowerCase();
   const list = collegeSorted().filter(c=>c.name.toLowerCase().includes(q));
   if (!list.length){
-    box.innerHTML = `<div class="h2h-none">No school matches \u201c${esc(state.colleges.q)}\u201d.</div>`;
+    box.innerHTML = `<div class="h2h-none">${q ? `No school matches \u201c${esc(state.colleges.q)}\u201d.`
+      : `No ${posNoun(state.colleges.pos, 2)} on a roster this year.`}</div>`;
     return;
   }
   const men = list.reduce((n,c)=>n+c.ps.length,0);
@@ -2618,6 +2647,7 @@ function renderColleges(){
     </div>
     <input class="csearch" id="cq" type="search" placeholder="Search a college"
       value="${esc(st.q||"")}" oninput="state.colleges.q=this.value;paintColleges()">
+    ${posRow(st.pos, s.grad)}
     <div class="pool-row">
       ${s.pools.map(x=>`<button class="pool-btn ${x.key===st.pool?'active':''}" data-pool="${x.key}">${x.label}</button>`).join("")}
     </div>
@@ -2655,46 +2685,54 @@ function collegeRow(p){
 
 function renderCollege(name){
   const s = SECTIONS.colleges;
-  const c = collegeList().find(x=>x.name===name);
-  if (!c){
+  const whole = collegeList().find(x=>x.name===name);
+  if (!whole){
     view.innerHTML = `<a class="pp-back" href="#colleges">\u2190 All colleges</a>
       <div class="h2h-none">No school by that name has a man in the league this year.</div>`;
     return;
   }
+  // The position pills carry over from the board, so the page shows the same
+  // slice of the roster you were just looking at.
+  const pos  = state.colleges.pos || "all";
+  const list = collegeList(pos);
+  const c    = list.find(x=>x.name===name);
+  const roster = (c ? c.ps : []).slice().sort((a,b)=>b.pts-a.pts || b.gp-a.gp || a.n.localeCompare(b.n));
+  const T = k => roster.reduce((n,p)=>n+p[k], 0);
   // Proper competition rank: schools tied on headcount share a place rather than
   // being ordered arbitrarily, and a one-man school gets no rank line at all.
-  const all = collegeList();
-  const rank = all.filter(x=>x.ps.length > c.ps.length).length + 1;
-  const tied = all.filter(x=>x.ps.length === c.ps.length).length > 1;
-  const rankTxt = c.ps.length===1 ? ""
+  const rank = c ? list.filter(x=>x.ps.length > c.ps.length).length + 1 : 0;
+  const tied = c ? list.filter(x=>x.ps.length === c.ps.length).length > 1 : false;
+  const rankTxt = (!c || roster.length===1) ? ""
     : tied ? `tied ${ord(rank)} most in the league`
     : rank===1 ? "most in the league"
     : `${ord(rank)} most in the league`;
-  const roster = c.ps.slice().sort((a,b)=>b.pts-a.pts || b.gp-a.gp || a.n.localeCompare(b.n));
-  const keepers = c.ps.filter(p=>p.p==="G");
-  const rooks = c.ps.filter(isRookie);
+  const rooks = roster.filter(isRookie);
+  const played = roster.filter(p=>p.gp).length;
   const nums = [
-    [c.ps.length,"Players"], [c.teams.size,"Teams"], [c.pts,"Points"],
-    [c.g,"Goals"], [c.a,"Assists"], [c.gb,"Groundballs"], [c.ct,"Caused TOs"],
+    [roster.length,"Players"], [new Set(roster.map(p=>p.t)).size,"Teams"], [T("pts"),"Points"],
+    [T("g"),"Goals"], [T("a"),"Assists"], [T("gb"),"Groundballs"], [T("ct"),"Caused TOs"],
   ];
-  if (keepers.length) nums.push([c.sv,"Saves"]);
+  if (roster.some(p=>p.p==="G")) nums.push([T("sv"),"Saves"]);
   view.innerHTML = `
   <div style="${sectionVars(s)}">
     <a class="pp-back" href="#colleges">\u2190 All colleges</a>
     <div class="cl-hd">
-      ${schoolMark(c.name,'smark-xl')}
+      ${schoolMark(name,'smark-xl')}
       <div>
         <div class="cl-eyebrow">PLL 2026</div>
-        <div class="cl-nm">${esc(c.name)}</div>
+        <div class="cl-nm">${esc(name)}</div>
         <div class="rb-meta" style="margin-top:9px">
-          <span>${c.ps.length} player${c.ps.length===1?'':'s'}</span>
+          <span>${roster.length} ${posNoun(pos, roster.length)}</span>
           ${rankTxt?`<span style="color:var(--ink-faint)">\u00b7</span><span>${rankTxt}</span>`:''}
           ${rooks.length?`<span style="color:var(--ink-faint)">\u00b7</span><span>${rooks.length} rookie${rooks.length===1?'':'s'}</span>`:''}
         </div>
       </div>
     </div>
 
-    <div class="kw-sub">2026 season</div>
+    <div style="margin-top:20px">${posRow(pos, s.grad)}</div>
+
+    ${!roster.length ? `<div class="h2h-none">No ${posNoun(pos, 2)} from ${esc(name)} this year.</div>` : `
+    <div class="kw-sub" style="margin-top:14px">2026 season</div>
     <div class="tm-nums">
       ${nums.map(([v,l])=>`<div><div class="d-val">${v}</div><div class="d-label">${l}</div></div>`).join("")}
     </div>
@@ -2703,23 +2741,23 @@ function renderCollege(name){
     <div class="board" style="gap:9px">${roster.map(p=>collegeRow(p)).join("")}</div>
 
     <div class="note">
-      ${c.ps.length===1
-        ? `The only ${esc(c.name)} man on a roster this year. `
-        : `Totals add up every ${esc(c.name)} man in the league, so they cross teams. `}${(()=>{
-        const idle = c.ps.length - c.played;
+      ${roster.length===1
+        ? `The only ${esc(name)} ${posMan(pos)} on a roster this year. `
+        : `Totals add up every ${esc(name)} ${posMan(pos)} in the league, so they cross teams. `}${(()=>{
+        const idle = roster.length - played;
         if (!idle) return "";
-        if (c.ps.length===1) return "He has not played a game yet. ";
-        if (idle===c.ps.length) return "None of them has played a game yet. ";
+        if (roster.length===1) return "He has not played a game yet. ";
+        if (idle===roster.length) return "None of them has played a game yet. ";
         return `${idle} of them ${idle===1?"has":"have"} not played a game yet. `;
       })()}Stats through Fri, Jul 31.
-    </div>
+    </div>`}
   </div>`;
 }
 
 // ---------- Home states ----------
 function stateSorted(){
   const st = state.states;
-  const list = stateList();
+  const list = stateList(st.pos);
   if (st.pool==="az")  return list.sort((a,b)=>a.name.localeCompare(b.name));
   if (st.pool==="pts") return list.sort((a,b)=>b.pts-a.pts || b.ps.length-a.ps.length || a.name.localeCompare(b.name));
   return list.sort((a,b)=>b.ps.length-a.ps.length || b.pts-a.pts || a.name.localeCompare(b.name));
@@ -2735,7 +2773,7 @@ function paintStates(){
     .filter(c=>c.name.toLowerCase().includes(q) || c.ab.toLowerCase().includes(q));
   if (!list.length){
     box.innerHTML = `<div class="h2h-none">${q ? `No state matches \u201c${esc(state.states.q)}\u201d.`
-      : "Nobody in the league this year is from there."}</div>`;
+      : `No ${posNoun(state.states.pos, 2)} from there this year.`}</div>`;
     return;
   }
   const noun = reg==="CA" ? ["province","provinces"] : reg==="INTL" ? ["country","countries"] : ["state","states"];
@@ -2776,6 +2814,7 @@ function renderStates(){
         return `<button class="pool-btn ${on?'active':''}" ${on?`style="background:${g};color:#fff;border-color:transparent"`:''} data-reg="${r.key}">${r.label}</button>`;
       }).join("")}
     </div>
+    ${posRow(st.pos, s.grad)}
     <div class="pool-row">
       ${s.pools.map(x=>`<button class="pool-btn ${x.key===st.pool?'active':''}" data-pool="${x.key}">${x.label}</button>`).join("")}
     </div>
@@ -2810,47 +2849,55 @@ function stateRow(p){
 
 function renderState(ab){
   const s = SECTIONS.states;
-  const c = stateList().find(x=>x.ab===ab);
-  if (!c){
+  const whole = stateList().find(x=>x.ab===ab);
+  if (!whole){
     view.innerHTML = `<a class="pp-back" href="#states">\u2190 All states</a>
       <div class="h2h-none">Nobody in the league this year is from there.</div>`;
     return;
   }
-  const all = stateList();
-  const rank = all.filter(x=>x.ps.length > c.ps.length).length + 1;
-  const tied = all.filter(x=>x.ps.length === c.ps.length).length > 1;
-  const rankTxt = c.ps.length===1 ? ""
+  // The position pills carry over from the board.
+  const pos  = state.states.pos || "all";
+  const list = stateList(pos);
+  const c    = list.find(x=>x.ab===ab);
+  const roster = (c ? c.ps : []).slice().sort((a,b)=>b.pts-a.pts || b.gp-a.gp || a.n.localeCompare(b.n));
+  const T = k => roster.reduce((n,p)=>n+p[k], 0);
+  const rank = c ? list.filter(x=>x.ps.length > c.ps.length).length + 1 : 0;
+  const tied = c ? list.filter(x=>x.ps.length === c.ps.length).length > 1 : false;
+  const rankTxt = (!c || roster.length===1) ? ""
     : tied ? `tied ${ord(rank)} most in the league`
     : rank===1 ? "most in the league"
     : `${ord(rank)} most in the league`;
-  const roster = c.ps.slice().sort((a,b)=>b.pts-a.pts || b.gp-a.gp || a.n.localeCompare(b.n));
-  const rooks = c.ps.filter(isRookie);
+  const rooks = roster.filter(isRookie);
+  const played = roster.filter(p=>p.gp).length;
   const nums = [
-    [c.ps.length,"Players"], [c.teams.size,"Teams"], [c.pts,"Points"],
-    [c.g,"Goals"], [c.a,"Assists"], [c.gb,"Groundballs"], [c.ct,"Caused TOs"],
+    [roster.length,"Players"], [new Set(roster.map(p=>p.t)).size,"Teams"], [T("pts"),"Points"],
+    [T("g"),"Goals"], [T("a"),"Assists"], [T("gb"),"Groundballs"], [T("ct"),"Caused TOs"],
   ];
-  if (c.ps.some(p=>p.p==="G")) nums.push([c.sv,"Saves"]);
+  if (roster.some(p=>p.p==="G")) nums.push([T("sv"),"Saves"]);
   // The page takes the colour of its country, the way a section takes its own gradient.
-  const rs = REGION_STYLE[regionOf(c.ab)];
+  const rs = REGION_STYLE[regionOf(whole.ab)];
   const vars = `--accent-ink:${theme==="dark"?rs.accentDark:rs.accent};--accent-soft:${rs.soft};`
              + `--accent-line:${rs.line};--glow:${rs.glow};--sq-grad:${rs.grad};--sq-glow:${rs.glow}`;
   view.innerHTML = `
   <div style="${vars}">
     <a class="pp-back" href="#states">\u2190 All states</a>
     <div class="cl-hd">
-      ${square(c.ab,'sq-xl')}
+      ${square(whole.ab,'sq-xl')}
       <div>
         <div class="cl-eyebrow">PLL 2026</div>
-        <div class="cl-nm">${esc(c.name)}</div>
+        <div class="cl-nm">${esc(whole.name)}</div>
         <div class="rb-meta" style="margin-top:9px">
-          <span>${c.ps.length} player${c.ps.length===1?'':'s'}</span>
+          <span>${roster.length} ${posNoun(pos, roster.length)}</span>
           ${rankTxt?`<span style="color:var(--ink-faint)">\u00b7</span><span>${rankTxt}</span>`:''}
           ${rooks.length?`<span style="color:var(--ink-faint)">\u00b7</span><span>${rooks.length} rookie${rooks.length===1?'':'s'}</span>`:''}
         </div>
       </div>
     </div>
 
-    <div class="kw-sub">2026 season</div>
+    <div style="margin-top:20px">${posRow(pos, rs.grad)}</div>
+
+    ${!roster.length ? `<div class="h2h-none">No ${posNoun(pos, 2)} from ${esc(whole.name)} this year.</div>` : `
+    <div class="kw-sub" style="margin-top:14px">2026 season</div>
     <div class="tm-nums">
       ${nums.map(([v,l])=>`<div><div class="d-val">${v}</div><div class="d-label">${l}</div></div>`).join("")}
     </div>
@@ -2859,15 +2906,15 @@ function renderState(ab){
     <div class="board" style="gap:9px">${roster.map(p=>stateRow(p)).join("")}</div>
 
     <div class="note">
-      ${c.ps.length===1
-        ? `The only ${esc(c.name)} man on a roster this year. `
-        : `Totals add up every ${esc(c.name)} man in the league, so they cross teams. `}${(()=>{ const idle = c.ps.length - c.played;
+      ${roster.length===1
+        ? `The only ${esc(whole.name)} ${posMan(pos)} on a roster this year. `
+        : `Totals add up every ${esc(whole.name)} ${posMan(pos)} in the league, so they cross teams. `}${(()=>{ const idle = roster.length - played;
         if (!idle) return "";
-        if (c.ps.length===1) return "He has not played a game yet. ";
-        if (idle===c.ps.length) return "None of them has played a game yet. ";
+        if (roster.length===1) return "He has not played a game yet. ";
+        if (idle===roster.length) return "None of them has played a game yet. ";
         return `${idle} of them ${idle===1?"has":"have"} not played a game yet. `;
       })()}Stats through Fri, Jul 31.
-    </div>
+    </div>`}
   </div>`;
 }
 
@@ -3225,8 +3272,16 @@ document.addEventListener("click", e=>{
   const route = currentRoute();
   if (route==="player") return;
   if (route==="home") return;
-  if (route==="college") return;
-  if (route==="state") return;
+  // A single school or state page has no section state of its own, but it does
+  // carry the position pills, so handle those and bail out.
+  if (route==="college" || route==="state"){
+    const pp = e.target.closest("[data-pos]");
+    if (!pp) return;
+    const key = route==="college" ? "colleges" : "states";
+    state[key].pos = pp.dataset.pos;
+    if (route==="college") renderCollege(routeCollege()); else renderState(routeState());
+    return;
+  }
   const st = state[route];
   const ts = e.target.closest("[data-tsel]");
   if (ts){
@@ -3256,6 +3311,8 @@ document.addEventListener("click", e=>{
   if (sb){ st.sort = sb.dataset.sort; renderSection(route); return; }
   const tb = e.target.closest("[data-team]");
   if (tb){ st.team = tb.dataset.team; renderSection(route); return; }
+  const po = e.target.closest("[data-pos]");
+  if (po){ st.pos = po.dataset.pos; renderSection(route); return; }
   const rg = e.target.closest("[data-reg]");
   if (rg){ st.reg = rg.dataset.reg; renderSection(route); return; }
   const pb = e.target.closest("[data-pool]");
